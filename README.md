@@ -9,3 +9,6 @@ another test (just a test without integration to system Engine, this solution us
 <img width="798" height="595" alt="image" src="https://github.com/user-attachments/assets/68e99096-ea18-4148-a947-32b6750eddfb" />
 
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/8b3a210d-328f-4a6e-a354-d8aaa4a40942" />
+
+stress test with optimisation with ASSIMP loader - 400 skeletal models with self animation and status update all memory 430 mb :)
+<img width="787" height="620" alt="image" src="https://github.com/user-attachments/assets/2a97ee08-a668-4d84-8560-0ca5494c447a" />
