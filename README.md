@@ -12,3 +12,7 @@ another test (just a test without integration to system Engine, this solution us
 
 stress test with optimisation with ASSIMP loader - 400 skeletal models with self animation and status update all memory 430 mb :) no broke, no load, fast work - unbelievable
 <img width="787" height="620" alt="image" src="https://github.com/user-attachments/assets/2a97ee08-a668-4d84-8560-0ca5494c447a" />
+
+1000 models
+
+<img width="796" height="634" alt="image" src="https://github.com/user-attachments/assets/fa5695e6-a25a-478c-8f78-45d6d32934d3" />
