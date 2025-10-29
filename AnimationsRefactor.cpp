@@ -18,89 +18,96 @@
 #define sqrt2 1.41421
 #define underS 0.1
 
-
 typedef unsigned int uint;
 typedef unsigned char byte;
 
-inline glm::mat4 assimpToGlmMatrix(aiMatrix4x4 mat) {
-	glm::mat4 m;
-	for (int y = 0; y < 4; y++)
-	{
-		for (int x = 0; x < 4; x++)
-		{
-			m[x][y] = mat[y][x];
-		}
-	}
-	return m;
+inline glm::mat4 assimpToGlmMatrix(aiMatrix4x4 mat)
+{
+    glm::mat4 m;
+    for (int y = 0; y < 4; y++)
+    {
+        for (int x = 0; x < 4; x++)
+        {
+            m[x][y] = mat[y][x];
+        }
+    }
+    return m;
 }
-inline glm::vec3 assimpToGlmVec3(aiVector3D vec) {
-	return glm::vec3(vec.x, vec.y, vec.z);
+inline glm::vec3 assimpToGlmVec3(aiVector3D vec)
+{
+    return glm::vec3(vec.x, vec.y, vec.z);
 }
 
-inline glm::quat assimpToGlmQuat(aiQuaternion quat) {
-	glm::quat q;
-	q.x = quat.x;
-	q.y = quat.y;
-	q.z = quat.z;
-	q.w = quat.w;
+inline glm::quat assimpToGlmQuat(aiQuaternion quat)
+{
+    glm::quat q;
+    q.x = quat.x;
+    q.y = quat.y;
+    q.z = quat.z;
+    q.w = quat.w;
 
-	return q;
+    return q;
 }
-inline unsigned int createShader(const char* vertexStr, const char* fragmentStr) {
-	int success;
-	char info_log[512];
-	uint
-		program = glCreateProgram(),
-		vShader = glCreateShader(GL_VERTEX_SHADER),
-		fShader = glCreateShader(GL_FRAGMENT_SHADER);
+inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
+{
+    int success;
+    char info_log[512];
+    uint
+        program = glCreateProgram(),
+        vShader = glCreateShader(GL_VERTEX_SHADER),
+        fShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-	glShaderSource(vShader, 1, &vertexStr, 0);
-	glCompileShader(vShader);
-	glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vShader, 512, 0, info_log);
-		std::cout << "vertex shader compilation failed!\n" << info_log << std::endl;
-	}
-	glShaderSource(fShader, 1, &fragmentStr, 0);
-	glCompileShader(fShader);
-	glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fShader, 512, 0, info_log);
-		std::cout << "fragment shader compilation failed!\n" << info_log << std::endl;
-	}
+    glShaderSource(vShader, 1, &vertexStr, 0);
+    glCompileShader(vShader);
+    glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vShader, 512, 0, info_log);
+        std::cout << "vertex shader compilation failed!\n"
+                  << info_log << std::endl;
+    }
+    glShaderSource(fShader, 1, &fragmentStr, 0);
+    glCompileShader(fShader);
+    glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fShader, 512, 0, info_log);
+        std::cout << "fragment shader compilation failed!\n"
+                  << info_log << std::endl;
+    }
 
-	glAttachShader(program, vShader);
-	glAttachShader(program, fShader);
-	glLinkProgram(program);
-	glGetProgramiv(program, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(program, 512, 0, info_log);
-		std::cout << "program linking failed!\n" << info_log << std::endl;
-	}
-	glDetachShader(program, vShader);
-	glDeleteShader(vShader);
-	glDetachShader(program, fShader);
-	glDeleteShader(fShader);
+    glAttachShader(program, vShader);
+    glAttachShader(program, fShader);
+    glLinkProgram(program);
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success)
+    {
+        glGetProgramInfoLog(program, 512, 0, info_log);
+        std::cout << "program linking failed!\n"
+                  << info_log << std::endl;
+    }
+    glDetachShader(program, vShader);
+    glDeleteShader(vShader);
+    glDetachShader(program, fShader);
+    glDeleteShader(fShader);
 
-	return program;
+    return program;
 }
 
 // g++-14  -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math Animation.cpp -o anima  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
 /*
 opengl skeletal animation demo
 */
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and 
+    // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-inline GLFWwindow* initWindow(int &windowWidth,int &windowHeight) {
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
+{
     if (!glfwInit())
     {
         std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -109,13 +116,13 @@ inline GLFWwindow* initWindow(int &windowWidth,int &windowHeight) {
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_SAMPLES, 4); 
+    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // Create the window
     // window->width = width;
     // window->height = height;
     // window->title = title;
-    GLFWwindow* window = glfwCreateWindow(800, 600," window->title.c_str()", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(800, 600, " window->title.c_str()", NULL, NULL);
     if (!window)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
@@ -138,10 +145,9 @@ inline GLFWwindow* initWindow(int &windowWidth,int &windowHeight) {
     }
 
     glEnable(GL_DEPTH_TEST);
-	return window;
+    return window;
 }
 
-void processInput(GLFWwindow *window, glm::mat4 &p);
 bool firstMouse = true;
 float yaw = -90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
@@ -151,7 +157,7 @@ float fov = 45.0f;
 int animation = 0;
 // camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 50.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 // timing
 float deltaTime = 0.0f; // time between current frame and last frame
@@ -312,6 +318,9 @@ struct Model
     ModelLocs *locs;
 
     glm::vec3 pos;
+    glm::vec3 rot{180, 0, 0};
+    glm::vec3 sc{.05f, .05f, .05f};
+    glm::vec3 front{0.0f, 0.0f, -1.0f};
     glm::mat4 modelMatrix;
 
     unsigned int boneCount = 0;
@@ -341,7 +350,7 @@ struct AnimationModel
 ///////////////////////////////////////////////////////////
 struct ModelOnLevel
 {
-    int n=0;
+    int n = 0;
     std::vector<Model> instances;
 };
 ///////////////////////////////////////////////////////////
@@ -773,14 +782,15 @@ void DeleteModel(Model *model)
     delete model->animtor;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+void processInput(GLFWwindow *window, Model *model);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // testFunction
-void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader,int n)
+void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader, int n)
 {
-    ms->n=n;
+    ms->n = n;
     // modelsOnLevel.instances = instances;
     ms->instances.resize(ms->n);
-    int l = underS*ms->n;
+    int l = underS * ms->n;
     std::cout << (float)(sqrt(2)) << std::endl;
     int tC = 0;
     int kC = 0;
@@ -793,20 +803,22 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
                 kC = 0;
 
             Model enemy = TableAnimationModel->models[0];
-
+            enemy.name = "Enemy" + std::to_string(ccc);
             enemy.shader = &shader;
 
             glm::vec3 pos = glm::vec3(i * 5.0f, 0.0f, j * 5.0f);
             glm::mat4 modelMatrix(1.0f);
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(0.0f, 0.0f, 1.0f));
             modelMatrix = glm::translate(modelMatrix, pos);
-            modelMatrix = glm::scale(modelMatrix, glm::vec3(.05f, .05f, .05f));
-
+            modelMatrix = glm::scale(modelMatrix, enemy.sc);
+            enemy.pos = pos;
             enemy.frame = kC;
 
             enemy.modelMatrix = modelMatrix;
 
-            ms->instances[ccc]= enemy;
+            ms->instances[ccc] = enemy;
 
             kC++;
             ccc++;
@@ -818,7 +830,7 @@ void loadModelB(Model *model, const std::string s, GLuint *modelLoc, GLuint *Bon
 {
 
     Assimp::Importer importer;
-    const char *filePath = s.c_str();                                          
+    const char *filePath = s.c_str();
     const aiScene *scene = importer.ReadFile(filePath, aiProcess_Triangulate);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -864,7 +876,6 @@ void loadModelB(Model *model, const std::string s, GLuint *modelLoc, GLuint *Bon
     model->locs->Texture = TextureLoc;
 
     importer.FreeScene();
-
 }
 
 void LoadAnimationModel(Model &model, const std::string s, GLuint *modelLoc, GLuint *BonesTLoc, GLuint *TextureLoc)
@@ -911,6 +922,10 @@ void LoadAnimationModel(Model &model, const std::string s, GLuint *modelLoc, GLu
     }
 }
 
+struct Patrol
+{
+};
+
 int main(int argc, char **argv)
 {
 
@@ -949,14 +964,22 @@ int main(int argc, char **argv)
 
     ModelOnLevel modelsOnLevel;
 
-    CreateInstancesOnLevel(&modelsOnLevel, &TableAnimationModel, shader,100);
-
+    CreateInstancesOnLevel(&modelsOnLevel, &TableAnimationModel, shader, 100);
+    std::cout << sizeof(TableAnimationModel.models[0].animtor->pAnimations[0]) << std::endl;
+    float angle2 = 1;
+    int kl = 0;
+    glm::vec3 enemyForward = glm::vec3(0.0f, 0.0f, 1.0f);
+    float angle1 = 45.0f;
+    modelsOnLevel.instances[0].name.clear();
+    modelsOnLevel.instances[0].name = "Player";
+    modelsOnLevel.instances[0].pos= modelsOnLevel.instances[0].modelMatrix[3];
     while (!glfwWindowShouldClose(window))
     {
         glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].modelMatrix[3]);
         glm::vec3 front = glm::normalize(glm::vec3(modelsOnLevel.instances[0].modelMatrix * glm::vec4(0, 0, 1, 0)));
         float distanceBehind = 40.0f;
         cameraPos = objectPos - front * distanceBehind + glm::vec3(0.0f, -7, 0.0f);
+
         modelsOnLevel.instances[0].frame = animation;
         viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         viewProjectionMatrix = projectionMatrix * viewMatrix;
@@ -965,23 +988,83 @@ int main(int argc, char **argv)
         lastTime = currentTime;
         // input
         // -----
-        processInput(window, modelsOnLevel.instances[0].modelMatrix);
 
+        processInput(window, &modelsOnLevel.instances[0]);
+
+        // if(angle==360)angle=0;
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shader);
         glUniformMatrix4fv(viewProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
 
+        // modelsOnLevel.instances[1].modelMatrix = glm::translate(modelsOnLevel.instances[1].modelMatrix, enemyForward);
+        modelsOnLevel.instances[1].pos += 10.5f * enemyForward * deltaTime;
+        if (kl == 0)
+        {
+            float tr = rand() % 360;
+            modelsOnLevel.instances[1].rot.y = tr;
+            // modelsOnLevel.instances[1].modelMatrix = glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(tr), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+        if (kl == 1000)
+        {
+            enemyForward = glm::normalize(modelsOnLevel.instances[0].pos - modelsOnLevel.instances[1].pos);
+            // Предположим, у вас есть позиции игрока и противника:
+            // glm::vec3 playerPos = modelsOnLevel.instances[0].modelMatrix[3]; // позиция игрока
+            // glm::vec3 enemyPos = modelsOnLevel.instances[1].modelMatrix[3];  // позиция противника
+
+            // // Текущий вектор взгляда противника (например, его локальный "вперёд" в мировых координатах)
+            // glm::vec3 enemyForward1 = enemyForward; // по умолчанию, смотрит вдоль оси Z
+
+            // // Вычисляем направление от противника к игроку
+            // glm::vec3 directionToPlayer = glm::normalize(playerPos - enemyPos);
+            // enemyForward=directionToPlayer;
+            // // Вычисляем угол между текущим взглядом противника и направлением на игрока
+
+
+            // float dotResult = glm::dot(enemyForward, directionToPlayer);
+            // dotResult = glm::clamp(dotResult, -1.0f, 1.0f); // для безопасности
+            // float angle = acos(dotResult);                  // в радианах
+
+            // // // Определяем ось для поворота (по Y, если предполагается поворот по горизонтали)
+            // glm::vec3 up = glm::vec3(0, 1, 0);
+
+            // // // Определяем знак угла для правильного направления поворота
+            // float crossProductZ = glm::dot(glm::cross(enemyForward, directionToPlayer), up);
+            // float sign = (crossProductZ < 0) ? -1.0f : 1.0f;
+
+            // // // Вычисляем окончательный угол с учетом знака
+            // float signedAngle = angle * sign;
+            // modelsOnLevel.instances[1].rot.y = angle;
+
+
+            // modelsOnLevel.instances[1].modelMatrix *= glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(angle1+signedAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+        kl++;
+        std::cout << kl << std::endl;
         for (auto &m : modelsOnLevel.instances)
         {
 
             updateModel(&m, deltaTime, m.frame);
-            glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(m.modelMatrix));
+
+            if (m.name == "Player"){
+                modelsOnLevel.instances[0].pos= modelsOnLevel.instances[0].modelMatrix[3];
+                glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(m.modelMatrix));
+            }
+            else
+            {
+                glm::mat4 modelMatrix(1.0f);
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+                modelMatrix = glm::translate(modelMatrix, m.pos);
+                modelMatrix = glm::scale(modelMatrix, m.sc);
+                glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+            }
 
             drawModel(&m);
         }
-
+        // angle+=5.0f;
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -992,40 +1075,38 @@ int main(int argc, char **argv)
     return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window, glm::mat4 &p)
+void processInput(GLFWwindow *window, Model *model)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
     float cameraSpeed = static_cast<float>(20.5 * deltaTime);
-    glm::vec3 objectPos = glm::vec3(p[3]);
+    // glm::vec3 objectPos = glm::vec3(p[3]);
     bool idle = true;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        p = glm::translate(p, cameraFront * (-1.0f));
+        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront * (-1.0f));
         cameraPos += cameraSpeed * cameraFront;
         animation = 12;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        p = glm::translate(p, cameraFront);
+        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront);
         cameraPos -= cameraSpeed * cameraFront;
         animation = -12;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        p = glm::translate(p, glm::normalize(glm::cross(cameraFront, cameraUp)));
+        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)));
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 4;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        p = glm::translate(p, glm::normalize(glm::cross(cameraFront, cameraUp)) * (-1.0f));
+        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)) * (-1.0f));
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 8;
         idle = false;
@@ -1073,3 +1154,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(front);
 }
+
