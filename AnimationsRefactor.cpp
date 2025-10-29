@@ -1015,18 +1015,18 @@ int main(int argc, char **argv)
             // Используем atan2 для определения угла с учетом направления
             float angle4 = atan2(glm::cross(enemyForward, directionToPlayer).y, glm::dot(enemyForward, directionToPlayer));
 
-            float upY = 1.0f; // Вектор "вверх" по Y
-            float crossProductY = glm::dot(glm::cross(enemyForward, directionToPlayer), glm::vec3(0, 1, 0));
-            float sign = (crossProductY < 0) ? -1.0f : 1.0f;
+            // float upY = 1.0f; // Вектор "вверх" по Y
+            // float crossProductY = glm::dot(glm::cross(enemyForward, directionToPlayer), glm::vec3(0, 1, 0));
+            // float sign = (crossProductY < 0) ? -1.0f : 1.0f;
 
-            float signedAngle = angle4 * sign;
+            // float signedAngle = angle4 * sign;
 
             // Обновление Rotation
             modelsOnLevel.instances[1].rot.y += glm::degrees(angle4);
             enemyForward = directionToPlayer;
-            std::cout << "enemyForward: " << enemyForward.x << ", " << enemyForward.y << ", " << enemyForward.z << std::endl;
-            std::cout << "directionToPlayer: " << directionToPlayer.x << ", " << directionToPlayer.y << ", " << directionToPlayer.z << std::endl;
-            std::cout << "angle (rad): " << angle4 << std::endl;
+            // std::cout << "enemyForward: " << enemyForward.x << ", " << enemyForward.y << ", " << enemyForward.z << std::endl;
+            // std::cout << "directionToPlayer: " << directionToPlayer.x << ", " << directionToPlayer.y << ", " << directionToPlayer.z << std::endl;
+            // std::cout << "angle (rad): " << angle4 << std::endl;
             // modelsOnLevel.instances[1].modelMatrix = glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(modelsOnLevel.instances[1].rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
         }
         kl++;
