@@ -1008,7 +1008,7 @@ int main(int argc, char **argv)
         }
         if (kl == 1000)
         {
-            enemyForward = glm::normalize(modelsOnLevel.instances[0].pos - modelsOnLevel.instances[1].pos);
+            enemyForward = glm::normalize(modelsOnLevel.instances[0].pos - modelsOnLevel.instances[1].pos);//first test capture+worldspacefromenemy
             // Предположим, у вас есть позиции игрока и противника:
             // glm::vec3 playerPos = modelsOnLevel.instances[0].modelMatrix[3]; // позиция игрока
             // glm::vec3 enemyPos = modelsOnLevel.instances[1].modelMatrix[3];  // позиция противника
@@ -1154,4 +1154,3 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(front);
 }
-
