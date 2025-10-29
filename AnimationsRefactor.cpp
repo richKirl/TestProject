@@ -148,7 +148,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
 }
 
 bool firstMouse = true;
-float yaw = 90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float yaw = -135.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
@@ -156,7 +156,7 @@ float fov = 45.0f;
 int animation = 0;
 // camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 50.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 // timing
 float deltaTime = 0.0f; // time between current frame and last frame
@@ -317,7 +317,8 @@ struct Model
     ModelLocs *locs;
 
     glm::vec3 pos;
-    glm::vec3 rot{180, 0, 0};
+    glm::vec3 rA{180, 0, 0};
+    glm::quat orientation;
     glm::vec3 sc{.05f, .05f, .05f};
     glm::vec3 front{0.0f, 0.0f, -1.0f};
     glm::mat4 modelMatrix;
@@ -806,13 +807,19 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             enemy.shader = &shader;
 
             glm::vec3 pos = glm::vec3(i * 5.0f, 0.0f, j * 5.0f);
+            glm::quat newRotation = glm::angleAxis(glm::radians(enemy.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.z), glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::mat4 rotationMatrix = glm::toMat4(newRotation);
             glm::mat4 modelMatrix(1.0f);
             modelMatrix = glm::translate(modelMatrix, pos);
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
+            modelMatrix = modelMatrix * rotationMatrix; // Apply rotation
+            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
+            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
             modelMatrix = glm::scale(modelMatrix, enemy.sc);
             enemy.pos = pos;
+            enemy.orientation = newRotation;
             enemy.frame = kC;
 
             enemy.modelMatrix = modelMatrix;
@@ -974,10 +981,9 @@ int main(int argc, char **argv)
     modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
     while (!glfwWindowShouldClose(window))
     {
-        glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].modelMatrix[3]);
-        glm::vec3 front = glm::normalize(glm::vec3(modelsOnLevel.instances[0].modelMatrix * glm::vec4(0, 0, 1, 0)));
+        glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].pos);
         float distanceBehind = 40.0f;
-        cameraPos = objectPos - front * distanceBehind + glm::vec3(0.0f, -7, 0.0f);
+        cameraPos = objectPos + modelsOnLevel.instances[0].front * distanceBehind + glm::vec3(0.0f, -7, 0.0f);
 
         modelsOnLevel.instances[0].frame = animation;
         viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -1003,8 +1009,7 @@ int main(int argc, char **argv)
         {
             // srand(time(nullptr));
             float tr = rand() % 360;
-            modelsOnLevel.instances[1].rot.y = tr;
-            // modelsOnLevel.instances[1].modelMatrix = glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(tr), glm::vec3(0.0f, 1.0f, 0.0f));
+            modelsOnLevel.instances[1].rA.y = tr;
         }
         if (kl == 1000)
         {
@@ -1015,43 +1020,36 @@ int main(int argc, char **argv)
             // Используем atan2 для определения угла с учетом направления
             float angle4 = atan2(glm::cross(enemyForward, directionToPlayer).y, glm::dot(enemyForward, directionToPlayer));
 
-            // float upY = 1.0f; // Вектор "вверх" по Y
-            // float crossProductY = glm::dot(glm::cross(enemyForward, directionToPlayer), glm::vec3(0, 1, 0));
-            // float sign = (crossProductY < 0) ? -1.0f : 1.0f;
-
-            // float signedAngle = angle4 * sign;
-
-            // Обновление Rotation
-            modelsOnLevel.instances[1].rot.y += glm::degrees(angle4);
+            modelsOnLevel.instances[1].rA.y += glm::degrees(angle4);
             enemyForward = directionToPlayer;
-            // std::cout << "enemyForward: " << enemyForward.x << ", " << enemyForward.y << ", " << enemyForward.z << std::endl;
-            // std::cout << "directionToPlayer: " << directionToPlayer.x << ", " << directionToPlayer.y << ", " << directionToPlayer.z << std::endl;
-            // std::cout << "angle (rad): " << angle4 << std::endl;
-            // modelsOnLevel.instances[1].modelMatrix = glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(modelsOnLevel.instances[1].rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
         }
         kl++;
-        // std::cout << kl << std::endl;
         for (auto &m : modelsOnLevel.instances)
         {
 
             updateModel(&m, deltaTime, m.frame);
 
-            if (m.name == "Player")
-            {
-                modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
-                glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(m.modelMatrix));
-            }
-            else
-            {
-                glm::mat4 modelMatrix(1.0f);
+            glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-                modelMatrix = glm::translate(modelMatrix, m.pos);
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
-                modelMatrix = glm::scale(modelMatrix, m.sc);
-                glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-            }
+            // Создаем кватернионы по осям
+            glm::quat newRotationX = glm::angleAxis(glm::radians(m.rA.x), glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::quat newRotationY = glm::angleAxis(glm::radians(m.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::quat newRotationZ = glm::angleAxis(glm::radians(m.rA.z), glm::vec3(1.0f, 0.0f, 0.0f));
+
+            // Комбинируем вращения (порядок важен)
+            m.orientation = newRotationZ * newRotationY * newRotationX;
+
+            // Конвертируем кватернион в матрицу
+            glm::mat4 rotationMatrix = glm::toMat4(m.orientation);
+
+            // Создаем матрицы трансформаций
+            glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), m.pos);
+            glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), m.sc);
+
+            // Собираем итоговую модельную матрицу
+            modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+            glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+            // }
 
             drawModel(&m);
         }
@@ -1076,28 +1074,32 @@ void processInput(GLFWwindow *window, Model *model)
     bool idle = true;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront );
+        // model->modelMatrix = glm::translate(model->modelMatrix, cameraFront);
+        model->pos += cameraSpeed * cameraFront;
         cameraPos += cameraSpeed * cameraFront;
         animation = 12;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront* (-1.0f));
+        // model->modelMatrix = glm::translate(model->modelMatrix, cameraFront * (-1.0f));
+        model->pos -= cameraSpeed * cameraFront;
         cameraPos -= cameraSpeed * cameraFront;
         animation = -12;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp))* (-1.0f));
+        // model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)) * (-1.0f));
+        model->pos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 4;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)) );
+        // model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)));
+        model->pos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 8;
         idle = false;
@@ -1139,10 +1141,14 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     if (pitch < -89.0f)
         pitch = -89.0f;
 
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
+    // Создаем кватернионы по осям
+    glm::quat pitchQuat = glm::angleAxis(glm::radians(pitch), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::quat yawQuat = glm::angleAxis(glm::radians(yaw), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // Объединяем вращения (порядок важен, обычно yaw * pitch)
+    glm::quat combinedRotation = yawQuat * pitchQuat;
+
+    // Применяем к базовому вектору направления
+    cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
 
