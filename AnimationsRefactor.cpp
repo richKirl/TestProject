@@ -94,7 +94,6 @@ inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
     return program;
 }
 
-
 /*
 opengl skeletal animation demo
 */
@@ -149,7 +148,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
 }
 
 bool firstMouse = true;
-float yaw = -90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float yaw = 90.0f; // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
@@ -808,10 +807,10 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
 
             glm::vec3 pos = glm::vec3(i * 5.0f, 0.0f, j * 5.0f);
             glm::mat4 modelMatrix(1.0f);
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(1.0f, 0.0f, 0.0f));
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(0.0f, 0.0f, 1.0f));
             modelMatrix = glm::translate(modelMatrix, pos);
+            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
+            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
             modelMatrix = glm::scale(modelMatrix, enemy.sc);
             enemy.pos = pos;
             enemy.frame = kC;
@@ -972,7 +971,7 @@ int main(int argc, char **argv)
     float angle1 = 45.0f;
     modelsOnLevel.instances[0].name.clear();
     modelsOnLevel.instances[0].name = "Player";
-    modelsOnLevel.instances[0].pos= modelsOnLevel.instances[0].modelMatrix[3];
+    modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
     while (!glfwWindowShouldClose(window))
     {
         glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].modelMatrix[3]);
@@ -1002,62 +1001,54 @@ int main(int argc, char **argv)
         modelsOnLevel.instances[1].pos += 10.5f * enemyForward * deltaTime;
         if (kl == 0)
         {
+            // srand(time(nullptr));
             float tr = rand() % 360;
             modelsOnLevel.instances[1].rot.y = tr;
             // modelsOnLevel.instances[1].modelMatrix = glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(tr), glm::vec3(0.0f, 1.0f, 0.0f));
         }
         if (kl == 1000)
         {
-            enemyForward = glm::normalize(modelsOnLevel.instances[0].pos - modelsOnLevel.instances[1].pos);//first test capture+worldspacefromenemy
-            // Предположим, у вас есть позиции игрока и противника:
-            // glm::vec3 playerPos = modelsOnLevel.instances[0].modelMatrix[3]; // позиция игрока
-            // glm::vec3 enemyPos = modelsOnLevel.instances[1].modelMatrix[3];  // позиция противника
+            glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - modelsOnLevel.instances[1].pos);
+            float dotResult = glm::dot(enemyForward, directionToPlayer);
+            dotResult = glm::clamp(dotResult, -1.0f, 1.0f); // безопасность
 
-            // // Текущий вектор взгляда противника (например, его локальный "вперёд" в мировых координатах)
-            // glm::vec3 enemyForward1 = enemyForward; // по умолчанию, смотрит вдоль оси Z
+            // Используем atan2 для определения угла с учетом направления
+            float angle4 = atan2(glm::cross(enemyForward, directionToPlayer).y, glm::dot(enemyForward, directionToPlayer));
 
-            // // Вычисляем направление от противника к игроку
-            // glm::vec3 directionToPlayer = glm::normalize(playerPos - enemyPos);
-            // enemyForward=directionToPlayer;
-            // // Вычисляем угол между текущим взглядом противника и направлением на игрока
+            float upY = 1.0f; // Вектор "вверх" по Y
+            float crossProductY = glm::dot(glm::cross(enemyForward, directionToPlayer), glm::vec3(0, 1, 0));
+            float sign = (crossProductY < 0) ? -1.0f : 1.0f;
 
+            float signedAngle = angle4 * sign;
 
-            // float dotResult = glm::dot(enemyForward, directionToPlayer);
-            // dotResult = glm::clamp(dotResult, -1.0f, 1.0f); // для безопасности
-            // float angle = acos(dotResult);                  // в радианах
-
-            // // // Определяем ось для поворота (по Y, если предполагается поворот по горизонтали)
-            // glm::vec3 up = glm::vec3(0, 1, 0);
-
-            // // // Определяем знак угла для правильного направления поворота
-            // float crossProductZ = glm::dot(glm::cross(enemyForward, directionToPlayer), up);
-            // float sign = (crossProductZ < 0) ? -1.0f : 1.0f;
-
-            // // // Вычисляем окончательный угол с учетом знака
-            // float signedAngle = angle * sign;
-            // modelsOnLevel.instances[1].rot.y = angle;
-
-
-            // modelsOnLevel.instances[1].modelMatrix *= glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(angle1+signedAngle), glm::vec3(0.0f, 1.0f, 0.0f));
+            // Обновление Rotation
+            modelsOnLevel.instances[1].rot.y += glm::degrees(angle4);
+            enemyForward = directionToPlayer;
+            std::cout << "enemyForward: " << enemyForward.x << ", " << enemyForward.y << ", " << enemyForward.z << std::endl;
+            std::cout << "directionToPlayer: " << directionToPlayer.x << ", " << directionToPlayer.y << ", " << directionToPlayer.z << std::endl;
+            std::cout << "angle (rad): " << angle4 << std::endl;
+            // modelsOnLevel.instances[1].modelMatrix = glm::rotate(modelsOnLevel.instances[1].modelMatrix, glm::radians(modelsOnLevel.instances[1].rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
         }
         kl++;
-        std::cout << kl << std::endl;
+        // std::cout << kl << std::endl;
         for (auto &m : modelsOnLevel.instances)
         {
 
             updateModel(&m, deltaTime, m.frame);
 
-            if (m.name == "Player"){
-                modelsOnLevel.instances[0].pos= modelsOnLevel.instances[0].modelMatrix[3];
+            if (m.name == "Player")
+            {
+                modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
                 glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(m.modelMatrix));
             }
             else
             {
                 glm::mat4 modelMatrix(1.0f);
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.x), glm::vec3(1.0f, 0.0f, 0.0f));
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
                 modelMatrix = glm::translate(modelMatrix, m.pos);
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(m.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
                 modelMatrix = glm::scale(modelMatrix, m.sc);
                 glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
             }
@@ -1085,28 +1076,28 @@ void processInput(GLFWwindow *window, Model *model)
     bool idle = true;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront * (-1.0f));
+        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront );
         cameraPos += cameraSpeed * cameraFront;
         animation = 12;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront);
+        model->modelMatrix = glm::translate(model->modelMatrix, cameraFront* (-1.0f));
         cameraPos -= cameraSpeed * cameraFront;
         animation = -12;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)));
+        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp))* (-1.0f));
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 4;
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)) * (-1.0f));
+        model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)) );
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 8;
         idle = false;
@@ -1154,3 +1145,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(front);
 }
+
