@@ -17,7 +17,7 @@
 #include "stb_image.h"
 #define sqrt2 1.41421
 #define underS 0.1
-
+// g++-14  -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math Animation.cpp -o anima  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
 typedef unsigned int uint;
 typedef unsigned char byte;
 
@@ -94,7 +94,7 @@ inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
     return program;
 }
 
-// g++-14  -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math Animation.cpp -o anima  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+
 /*
 opengl skeletal animation demo
 */
