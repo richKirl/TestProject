@@ -322,6 +322,7 @@ struct Model
     glm::quat orientation;
     glm::vec3 sc{.05f, .05f, .05f};
     glm::vec3 front{0.0f, 0.0f, -1.0f};
+    float speed;
     int pseudoTimer;
     // bool gotoPatrol;
     bool patrol;
@@ -830,8 +831,8 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             enemy.pos = pos;
             enemy.pseudoTimer=0;
             enemy.orientation = newRotation;
-            enemy.frame = kC;
-
+            enemy.frame = 12;
+            enemy.speed = 10;
             enemy.modelMatrix = modelMatrix;
 
             ms->instances[ccc] = enemy;
@@ -1047,7 +1048,7 @@ int main(int argc, char **argv)
         {
             if (a.name != "Player")
             {
-                a.pos += 10.5f * a.front * deltaTime;
+                a.pos += a.speed * a.front * deltaTime;
                 if (a.pseudoTimer == 0)
                 {
                     a.patrol=true;
@@ -1059,9 +1060,12 @@ int main(int argc, char **argv)
                     glm::quat yawQuat = glm::angleAxis(glm::radians(a.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
                     glm::quat combinedRotation = yawQuat * pitchQuat;
                     a.front = glm::normalize(glm::rotate(combinedRotation, glm::vec3(0, 0, -1)));
+                    a.frame=12;
+                    a.speed=10+rand()%5;
                 }
                 if (a.pseudoTimer == 1000)
                 {
+                    a.frame=10;
                     a.agro=true;
                     a.agrostart=true;
                     glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - a.pos);
@@ -1085,9 +1089,10 @@ int main(int argc, char **argv)
                     new_quaternion = glm::normalize(new_quaternion);
                     a.front = directionToPlayer;
                     a.rA.y += glm::degrees(glm::axis(new_quaternion).y * 3);
+                    a.speed=20+rand()%5;
 
                 }
-                if(a.pseudoTimer > 1000&&glm::distance(a.pos,modelsOnLevel.instances[0].pos)<=0.1f){
+                if(a.pseudoTimer > 1000&&glm::distance(a.pos,modelsOnLevel.instances[0].pos)<=1.0f){
                     a.agroend=true;
                     a.pseudoTimer=0;
                     continue;
