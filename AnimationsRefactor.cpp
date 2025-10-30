@@ -829,7 +829,7 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
             modelMatrix = glm::scale(modelMatrix, enemy.sc);
             enemy.pos = pos;
-            enemy.pseudoTimer=0;
+            enemy.pseudoTimer = 0;
             enemy.orientation = newRotation;
             enemy.frame = 12;
             enemy.speed = 10;
@@ -1018,7 +1018,7 @@ int main(int argc, char **argv)
     // for (auto &a : modelsOnLevel.instances)
     //     std::cout << a.name << std::endl;
     srand(time(nullptr));
-    int closePP=0;
+    int closePP = 0;
     while (!glfwWindowShouldClose(window))
     {
         glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].pos);
@@ -1051,7 +1051,7 @@ int main(int argc, char **argv)
                 a.pos += a.speed * a.front * deltaTime;
                 if (a.pseudoTimer == 0)
                 {
-                    a.patrol=true;
+                    a.patrol = true;
                     float tr = rand() % 360;
                     std::cout << tr << std::endl;
                     a.rA.y += glm::degrees(tr);
@@ -1060,14 +1060,14 @@ int main(int argc, char **argv)
                     glm::quat yawQuat = glm::angleAxis(glm::radians(a.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
                     glm::quat combinedRotation = yawQuat * pitchQuat;
                     a.front = glm::normalize(glm::rotate(combinedRotation, glm::vec3(0, 0, -1)));
-                    a.frame=12;
-                    a.speed=10+rand()%5;
+                    a.frame = 12;
+                    a.speed = 10 + rand() % 5;
                 }
                 if (a.pseudoTimer == 1000)
                 {
-                    a.frame=10;
-                    a.agro=true;
-                    a.agrostart=true;
+                    a.frame = 10;
+                    a.agro = true;
+                    a.agrostart = true;
                     glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - a.pos);
                     // float dotResult = glm::dot(enemyForward, directionToPlayer);
                     // dotResult = glm::clamp(dotResult, -1.0f, 1.0f); // безопасность
@@ -1089,12 +1089,12 @@ int main(int argc, char **argv)
                     new_quaternion = glm::normalize(new_quaternion);
                     a.front = directionToPlayer;
                     a.rA.y += glm::degrees(glm::axis(new_quaternion).y * 3);
-                    a.speed=20+rand()%5;
-
+                    a.speed = 20 + rand() % 5;
                 }
-                if(a.pseudoTimer > 1000&&glm::distance(a.pos,modelsOnLevel.instances[0].pos)<=1.0f){//batle begin :)
-                    a.agroend=true;
-                    a.pseudoTimer=0;
+                if (a.pseudoTimer > 1000 && glm::distance(a.pos, modelsOnLevel.instances[0].pos) <= 1.0f)
+                { // batle begin :)
+                    a.agroend = true;
+                    a.pseudoTimer = 0;
                     continue;
                 }
                 a.pseudoTimer++;
