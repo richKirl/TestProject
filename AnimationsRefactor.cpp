@@ -1092,7 +1092,7 @@ int main(int argc, char **argv)
                     a.speed=20+rand()%5;
 
                 }
-                if(a.pseudoTimer > 1000&&glm::distance(a.pos,modelsOnLevel.instances[0].pos)<=1.0f){
+                if(a.pseudoTimer > 1000&&glm::distance(a.pos,modelsOnLevel.instances[0].pos)<=1.0f){//batle begin :)
                     a.agroend=true;
                     a.pseudoTimer=0;
                     continue;
