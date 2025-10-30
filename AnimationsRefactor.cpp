@@ -797,18 +797,18 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
 {
     ms->n = n;
     // modelsOnLevel.instances = instances;
-    ms->instances.resize(ms->n);
-    int l = underS * ms->n;
-    std::cout << (float)(sqrt(2)) << std::endl;
+    ms->instances.resize(10000);
+    // int l = underS * ms->n;
+    // std::cout << (float)(sqrt(2)) << std::endl;
     int tC = 0;
     int kC = 0;
     int ccc = 0;
-    for (int i = 0; i < l; ++i)
+    for (int i = 0; i < 100; ++i)
     {
-        for (int j = 0; j < l; ++j)
+        for (int j = 0; j < 100; ++j)
         {
-            if (kC == 13)
-                kC = 0;
+            // if (kC == 13)
+            //     kC = 0;
 
             Model enemy = TableAnimationModel->models[0];
             // std::cout << ccc << std::endl;
@@ -816,7 +816,7 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             enemy.name = "Enemy" + std::to_string(ccc);
             // enemy.shader = &shader;
 
-            glm::vec3 pos = glm::vec3(i * 5.0f, 0.0f, j * 5.0f);
+            glm::vec3 pos = glm::vec3(5.0f, 0.0f, 5.0f);
             glm::quat newRotation = glm::angleAxis(glm::radians(enemy.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
             //   newRotation = glm::angleAxis(glm::radians(enemy.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
             //   newRotation = glm::angleAxis(glm::radians(enemy.rA.z), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -837,7 +837,7 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
 
             ms->instances[ccc] = enemy;
 
-            kC++;
+            // kC++;
             ccc++;
         }
     }
@@ -1007,7 +1007,7 @@ int main(int argc, char **argv)
     ModelOnLevel modelsOnLevel;
 
     CreateInstancesOnLevel(&modelsOnLevel, &TableAnimationModel, shader, 100);
-    std::cout << sizeof(TableAnimationModel.models[0].animtor->pAnimations[0]) << std::endl;
+    // std::cout << sizeof(TableAnimationModel.models[0].animtor->pAnimations[0]) << std::endl;
     float angle2 = 1;
     int kl = 0;
     glm::vec3 enemyForward = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -1228,4 +1228,3 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
-
