@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <vector>
 #define GLM_FORCE_INTRINSICS
 #include <glm/glm.hpp>
@@ -148,7 +149,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
 }
 
 bool firstMouse = true;
-float yaw = -135.0f;//подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float yaw = -135.0f; // подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
@@ -803,11 +804,13 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
                 kC = 0;
 
             Model enemy = TableAnimationModel->models[0];
+            std::cout << ccc << std::endl;
+
             enemy.name = "Enemy" + std::to_string(ccc);
-            enemy.shader = &shader;
+            // enemy.shader = &shader;
 
             glm::vec3 pos = glm::vec3(i * 5.0f, 0.0f, j * 5.0f);
-            glm::quat newRotation = glm::angleAxis(glm::radians(enemy.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));//типо прямо
+            glm::quat newRotation = glm::angleAxis(glm::radians(enemy.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
             //   newRotation = glm::angleAxis(glm::radians(enemy.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
             //   newRotation = glm::angleAxis(glm::radians(enemy.rA.z), glm::vec3(0.0f, 0.0f, 1.0f));
             glm::mat4 rotationMatrix = glm::toMat4(newRotation);
@@ -976,9 +979,11 @@ int main(int argc, char **argv)
     int kl = 0;
     glm::vec3 enemyForward = glm::vec3(0.0f, 0.0f, 1.0f);
     float angle1 = 45.0f;
-    modelsOnLevel.instances[0].name.clear();
-    modelsOnLevel.instances[0].name = "Player";
+    modelsOnLevel.instances[0].name = {"Player"};
+    // modelsOnLevel.instances[0].name = "Player";
     modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
+    for (auto &a : modelsOnLevel.instances)
+        std::cout << a.name << std::endl;
     while (!glfwWindowShouldClose(window))
     {
         glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].pos);
@@ -1012,7 +1017,7 @@ int main(int argc, char **argv)
             std::cout << tr << std::endl;
             modelsOnLevel.instances[1].rA.y += glm::degrees(tr);
             // Создаем кватернионы по осям
-            glm::quat pitchQuat = glm::angleAxis(glm::radians(modelsOnLevel.instances[1].rA.x), glm::vec3(1.0f, 0.0f, 0.0f));//типо прямо
+            glm::quat pitchQuat = glm::angleAxis(glm::radians(modelsOnLevel.instances[1].rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
             glm::quat yawQuat = glm::angleAxis(glm::radians(modelsOnLevel.instances[1].rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
             glm::quat combinedRotation = yawQuat * pitchQuat;
             enemyForward = glm::normalize(glm::rotate(combinedRotation, glm::vec3(0, 0, -1)));
@@ -1020,14 +1025,26 @@ int main(int argc, char **argv)
         if (kl == 1000)
         {
             glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - modelsOnLevel.instances[1].pos);
-            float dotResult = glm::dot(enemyForward, directionToPlayer);
-            dotResult = glm::clamp(dotResult, -1.0f, 1.0f); // безопасность
+            // float dotResult = glm::dot(enemyForward, directionToPlayer);
+            // dotResult = glm::clamp(dotResult, -1.0f, 1.0f); // безопасность
 
-            // Используем atan2 для определения угла с учетом направления
-            float angle4 = atan2(glm::cross(enemyForward, directionToPlayer).y, glm::dot(enemyForward, directionToPlayer));
+            // // Используем atan2 для определения угла с учетом направления
+            // float angle4 = atan2(glm::cross(enemyForward, directionToPlayer).y, glm::dot(enemyForward, directionToPlayer));
 
-            modelsOnLevel.instances[1].rA.y += glm::degrees(angle4);
+            // modelsOnLevel.instances[1].rA.y += glm::degrees(angle4);
+            // enemyForward = directionToPlayer;
+            float interpolation_factor = 0.1f; // Коэффициент интерполяции
+
+            glm::vec3 forward = glm::normalize(modelsOnLevel.instances[1].pos + enemyForward);
+
+            glm::quat current_quaternion = glm::rotation(forward, glm::normalize(enemyForward));
+            glm::quat target_quaternion = glm::rotation(forward, glm::normalize(directionToPlayer));
+
+            glm::quat new_quaternion = glm::slerp(current_quaternion, target_quaternion, interpolation_factor);
+
+            new_quaternion = glm::normalize(new_quaternion);
             enemyForward = directionToPlayer;
+            modelsOnLevel.instances[1].rA.y += glm::degrees(glm::axis(new_quaternion).y * 3);//!
         }
         kl++;
         for (auto &m : modelsOnLevel.instances)
@@ -1038,7 +1055,7 @@ int main(int argc, char **argv)
             glm::mat4 modelMatrix = glm::mat4(1.0f);
 
             // Создаем кватернионы по осям
-            glm::quat newRotationX = glm::angleAxis(glm::radians(m.rA.x), glm::vec3(0.0f, 0.0f, 1.0f));//типо обратно типо относительно камеры наверно
+            glm::quat newRotationX = glm::angleAxis(glm::radians(m.rA.x), glm::vec3(0.0f, 0.0f, 1.0f)); // типо обратно типо относительно камеры наверно
             glm::quat newRotationY = glm::angleAxis(glm::radians(m.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
             glm::quat newRotationZ = glm::angleAxis(glm::radians(m.rA.z), glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -1157,4 +1174,5 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
+
 
