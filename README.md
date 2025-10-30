@@ -2,6 +2,10 @@
 
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice ;)
 
+stress test 10000 :)
+<img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
+
+
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/25e5df1b-bedf-403c-85c5-1469b8b1e420" />
 
 
