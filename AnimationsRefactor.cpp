@@ -323,12 +323,12 @@ struct Model
     glm::vec3 sc{.05f, .05f, .05f};
     glm::vec3 front{0.0f, 0.0f, -1.0f};
     float speed;
-    int pseudoTimer;
+    int pseudoTimer;//unittime quant
     // bool gotoPatrol;
-    bool patrol;
-    bool agro;
-    bool agrostart;
-    bool agroend;
+    bool patrol;//state
+    bool agro;//state
+    bool agrostart;//state
+    bool agroend;//state
     glm::mat4 modelMatrix;
 
     unsigned int boneCount = 0;
