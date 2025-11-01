@@ -34,7 +34,7 @@
 #define sqrt2 1.41421
 #define underS 0.1
 // g++-14 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
-//clang++-20 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+// clang++-20 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
 
 
 //////////////////////////////////////////////////////////////////////
@@ -298,7 +298,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     // glfwSetCursorPosCallback(window, mouse_callback);
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
-    if (GLEW_OK == err)
+    if (GLEW_OK != err)
     {
         // std::cerr << "Failed to initialize GLEW" << std::endl;
         Logger::log(LogLevel::ERROR,"Failed to initialize GLEW glewInit()" +std::to_string(__LINE__)+ " " + __FILE__);
@@ -954,7 +954,8 @@ void DeleteModel(Model *model)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 void processInput(GLFWwindow *window, Model *model);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-// testFunction
+// testFunctions
+//standardFUnction
 void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader, int n)
 {
     ms->n = n;
@@ -968,6 +969,56 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
     for (int i = 0; i < l; ++i)
     {
         for (int j = 0; j < l; ++j)
+        {
+            // if (kC == 13)
+            //     kC = 0;
+
+            Model enemy = TableAnimationModel->models[0];
+            // std::cout << ccc << std::endl;
+
+            enemy.name = "Enemy" + std::to_string(ccc);
+            // enemy.shader = &shader;
+
+            glm::vec3 pos = glm::vec3(5.0f, 0.0f, 5.0f);
+            glm::quat newRotation = glm::angleAxis(glm::radians(enemy.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
+            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.z), glm::vec3(0.0f, 0.0f, 1.0f));
+            glm::mat4 rotationMatrix = glm::toMat4(newRotation);
+            glm::mat4 modelMatrix(1.0f);
+            modelMatrix = glm::translate(modelMatrix, pos);
+            modelMatrix = modelMatrix * rotationMatrix; // Apply rotation
+            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
+            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
+            modelMatrix = glm::scale(modelMatrix, enemy.sc);
+            enemy.pos = pos;
+            enemy.pseudoTimer = 0;
+            enemy.orientation = newRotation;
+            enemy.frame = 12;
+            enemy.speed = 10;
+            enemy.modelMatrix = modelMatrix;
+
+            ms->instances[ccc] = enemy;
+
+            // kC++;
+            ccc++;
+        }
+    }
+}
+//stressTest10000
+void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader)
+{
+    ms->n = 10000;
+    // modelsOnLevel.instances = instances;
+    ms->instances.resize(10000);
+    int l = underS * ms->n;
+    // std::cout << (float)(sqrt(2)) << std::endl;
+    int tC = 0;
+    int kC = 0;
+    int ccc = 0;
+    for (int i = 0; i < 100; ++i)
+    {
+        for (int j = 0; j < 100; ++j)
         {
             // if (kC == 13)
             //     kC = 0;
@@ -1172,6 +1223,7 @@ int main(int argc, char **argv)
     ModelOnLevel modelsOnLevel;
 
     CreateInstancesOnLevel(&modelsOnLevel, &TableAnimationModel, shader, 100);
+    // CreateInstancesOnLevel10000(&modelsOnLevel, &TableAnimationModel, shader);
     // std::cout << sizeof(TableAnimationModel.models[0].animtor->pAnimations[0]) << std::endl;
     float angle2 = 1;
     int kl = 0;
@@ -1394,5 +1446,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
-
 
