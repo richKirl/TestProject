@@ -4,6 +4,7 @@
 #include <vector>
 //ifglm==1.0.1
 #define GLM_ENABLE_EXPERIMENTAL
+//
 #define GLM_FORCE_INTRINSICS
 #define GLM_FORCE_AVX2
 #include <glm/glm.hpp>
@@ -36,7 +37,7 @@
 //clang++-20 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
 
 
-
+//////////////////////////////////////////////////////////////////////
 // Уровни логирования
 enum class LogLevel {
     ERROR = 0,
@@ -156,10 +157,10 @@ private:
         }
     }
 };
+//////////////////////////////////////////////////////////////////////
 
 
-
-
+//////////////////////////////////////////////////////////////////////
 //getrand from x to y
 int GetRand(int a,int b){
 
@@ -171,20 +172,7 @@ int GetRand(int a,int b){
 
     return distrib(gen);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////
 
 
 
@@ -280,8 +268,9 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
 {
     if (!glfwInit())
     {
+
         // std::cerr << "Failed to initialize GLFW" << std::endl;
-        Logger::log(LogLevel::ERROR,"Failed to initialize glfwInit()" +std::to_string(__LINE__));
+        Logger::log(LogLevel::ERROR,"Failed to initialize glfwInit()" +std::to_string(__LINE__) + " " + __FILE__);
         // Handle error, e.g., throw an exception or exit
         // return;
     }
@@ -297,7 +286,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     if (!window)
     {
         // std::cerr << "Failed to create GLFW window" << std::endl;
-        Logger::log(LogLevel::ERROR,"Failed to create GLFW window window" +std::to_string(__LINE__));
+        Logger::log(LogLevel::ERROR,"Failed to create GLFW window window" +std::to_string(__LINE__)+ " " + __FILE__);
         glfwTerminate(); // Terminate GLFW if window creation fails
         // Handle error
         // return;
@@ -309,10 +298,10 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     // glfwSetCursorPosCallback(window, mouse_callback);
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
-    if (GLEW_OK != err)
+    if (GLEW_OK == err)
     {
         // std::cerr << "Failed to initialize GLEW" << std::endl;
-        Logger::log(LogLevel::ERROR,"Failed to initialize GLEW glewInit()" +std::to_string(__LINE__));
+        Logger::log(LogLevel::ERROR,"Failed to initialize GLEW glewInit()" +std::to_string(__LINE__)+ " " + __FILE__);
         // Handle error, e.g., throw an exception or exit
         // return;
     }
@@ -1405,4 +1394,5 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
+
 
