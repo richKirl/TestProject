@@ -1,9 +1,11 @@
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
-#include <string_view>
 #include <vector>
+//ifglm==1.0.1
+#define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_INTRINSICS
+#define GLM_FORCE_AVX2
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -14,11 +16,169 @@
 #include <unordered_map>
 #include <GLFW/glfw3.h>
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
+// #include <memory>
+#include <vector>
+// #include <algorithm>
+// #include <chrono>
+// #include <thread>
+#include <string_view>
+#include <mutex>
+#include <sstream>
+// #include <stdexcept>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define sqrt2 1.41421
 #define underS 0.1
-// g++-14  -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math Animation.cpp -o anima  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+// g++-14 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+//clang++-20 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+
+
+
+// Уровни логирования
+enum class LogLevel {
+    ERROR = 0,
+    WARNING,
+    INFO,
+    DEBUG
+};
+
+// Структура для описания каждого вывода
+struct LogOutput {
+    std::ostream* stream; // указатель на поток (например, std::cout или файл)
+    std::ofstream fileStream; // если вывод в файл
+    LogLevel level; // уровень для этого вывода
+    bool isFile; // флаг, что это файл
+};
+
+class Logger {
+public:
+    static void init(LogLevel level = LogLevel::INFO, std::string_view filename = "", LogLevel fileLevel = LogLevel::DEBUG) {
+        auto& inst = getInstance();
+        inst.setLogLevel(level);
+        if (!filename.empty()) {
+            inst.addOutputFile(std::string(filename), fileLevel);
+        }
+    }
+
+    static void setLevel(LogLevel level) {
+        getInstance().setLogLevel(level);
+    }
+
+    static void addOutputFile(std::string_view filename, LogLevel level = LogLevel::DEBUG) {
+        getInstance().addFileOutput(std::string(filename), level);
+    }
+
+    // Логирование сообщения с уровнем
+    static void log(LogLevel level, std::string_view message) {
+        getInstance().logMessage(level, message);
+    }
+
+    template<typename T>
+    static void log(LogLevel level, std::string_view message, const T& arg) {
+        std::ostringstream oss;
+        oss << message << arg;
+        getInstance().logMessage(level, oss.str());
+    }
+
+    template<typename T, typename... Args>
+    static void log(LogLevel level, std::string_view message, const T& first, const Args&... rest) {
+        std::ostringstream oss;
+        oss << message << first;
+        (oss << ... << rest);
+        getInstance().logMessage(level, oss.str());
+    }
+
+    static void shutdown() {
+        auto& inst = getInstance();
+        for (auto& out : inst.outputs) {
+            if (out.isFile && out.fileStream.is_open()) {
+                out.fileStream.close();
+            }
+        }
+        inst.outputs.clear();
+    }
+
+private:
+    LogLevel currentLevel = LogLevel::INFO;
+    std::vector<LogOutput> outputs;
+    std::mutex mutex_;
+
+    static Logger& getInstance() {
+        static Logger instance;
+        return instance;
+    }
+
+    Logger() = default;
+
+    void setLogLevel(LogLevel level) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        currentLevel = level;
+    }
+
+    void addFileOutput(std::string_view filename, LogLevel level) {
+        LogOutput out;
+        out.fileStream.open(std::string(filename));
+        out.stream = &out.fileStream;
+        out.level = level;
+        out.isFile = true;
+        outputs.push_back(std::move(out));
+    }
+
+    void logMessage(LogLevel level, std::string_view message) {
+        if (level > currentLevel) return;
+
+        std::lock_guard<std::mutex> lock(mutex_);
+        std::string prefix = levelToString(level);
+        std::string t{"[" + prefix + "] " + std::string(message)};
+        std::string_view output{t};
+
+        // Вывод в консоль
+        std::cout << output << std::endl;
+
+        // Вывод в файлы
+        for (auto& file : outputs) {
+            if (file.isFile) {
+                file.fileStream << output << std::endl;
+            }
+        }
+    }
+
+    std::string levelToString(LogLevel level) {
+        switch (level) {
+        case LogLevel::ERROR: return "ERROR";
+        case LogLevel::WARNING: return "WARN";
+        case LogLevel::INFO: return "INFO";
+        case LogLevel::DEBUG: return "DEBUG";
+        default: return "UNKNOWN";
+        }
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 typedef unsigned int uint;
 typedef unsigned char byte;
 
@@ -110,7 +270,8 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
 {
     if (!glfwInit())
     {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
+        // std::cerr << "Failed to initialize GLFW" << std::endl;
+        Logger::log(LogLevel::ERROR,"Failed to initialize glfwInit()" +std::to_string(__LINE__));
         // Handle error, e.g., throw an exception or exit
         // return;
     }
@@ -125,7 +286,8 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     GLFWwindow *window = glfwCreateWindow(800, 600, " window->title.c_str()", NULL, NULL);
     if (!window)
     {
-        std::cerr << "Failed to create GLFW window" << std::endl;
+        // std::cerr << "Failed to create GLFW window" << std::endl;
+        Logger::log(LogLevel::ERROR,"Failed to create GLFW window window" +std::to_string(__LINE__));
         glfwTerminate(); // Terminate GLFW if window creation fails
         // Handle error
         // return;
@@ -139,7 +301,8 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
-        std::cerr << "Failed to initialize GLEW" << std::endl;
+        // std::cerr << "Failed to initialize GLEW" << std::endl;
+        Logger::log(LogLevel::ERROR,"Failed to initialize GLEW glewInit()" +std::to_string(__LINE__));
         // Handle error, e.g., throw an exception or exit
         // return;
     }
@@ -797,15 +960,15 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
 {
     ms->n = n;
     // modelsOnLevel.instances = instances;
-    ms->instances.resize(10000);
-    // int l = underS * ms->n;
+    ms->instances.resize(n);
+    int l = underS * ms->n;
     // std::cout << (float)(sqrt(2)) << std::endl;
     int tC = 0;
     int kC = 0;
     int ccc = 0;
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < l; ++i)
     {
-        for (int j = 0; j < 100; ++j)
+        for (int j = 0; j < l; ++j)
         {
             // if (kC == 13)
             //     kC = 0;
@@ -852,7 +1015,10 @@ void loadModelB(Model *model, const std::string s, GLuint *modelLoc, GLuint *Bon
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+        // std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+        std::string err="ERROR::ASSIMP::";
+        err+=importer.GetErrorString() +std::to_string(__LINE__);
+        Logger::log(LogLevel::ERROR,err);
         return;
     }
 
@@ -970,7 +1136,7 @@ void LoadAnimationModel(Model &model, const std::string s, GLuint *modelLoc, GLu
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
-
+    Logger::init(LogLevel::DEBUG, "", LogLevel::WARNING);
     // init
     int windowWidth, windowHeight;
     GLFWwindow *window = initWindow(windowWidth, windowHeight);
@@ -1053,7 +1219,8 @@ int main(int argc, char **argv)
                 {
                     a.patrol = true;
                     float tr = rand() % 360;
-                    std::cout << tr << std::endl;
+                    // std::cout << tr << std::endl;
+                    Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
                     a.rA.y += glm::degrees(tr);
                     // Создаем кватернионы по осям
                     glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
@@ -1134,7 +1301,7 @@ int main(int argc, char **argv)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
+    Logger::shutdown();
     DeleteModel(&TableAnimationModel.models[0]);
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -1228,3 +1395,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
+
