@@ -18,6 +18,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <random>
 // #include <memory>
 #include <vector>
 // #include <algorithm>
@@ -159,8 +160,17 @@ private:
 
 
 
+//getrand from x to y
+int GetRand(int a,int b){
 
+    std::random_device rd;
 
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> distrib(a, b);
+
+    return distrib(gen);
+}
 
 
 
@@ -1178,12 +1188,12 @@ int main(int argc, char **argv)
     int kl = 0;
     glm::vec3 enemyForward = glm::vec3(0.0f, 0.0f, 1.0f);
     float angle1 = 45.0f;
-    modelsOnLevel.instances[0].name = {"Player"};
+    modelsOnLevel.instances[0].name ={"Player"};
     // modelsOnLevel.instances[0].name = "Player";
     modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
     // for (auto &a : modelsOnLevel.instances)
     //     std::cout << a.name << std::endl;
-    srand(time(nullptr));
+    // srand(time(nullptr));
     int closePP = 0;
     while (!glfwWindowShouldClose(window))
     {
@@ -1218,7 +1228,7 @@ int main(int argc, char **argv)
                 if (a.pseudoTimer == 0)
                 {
                     a.patrol = true;
-                    float tr = rand() % 360;
+                    float tr = GetRand(0,360);
                     // std::cout << tr << std::endl;
                     Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
                     a.rA.y += glm::degrees(tr);
