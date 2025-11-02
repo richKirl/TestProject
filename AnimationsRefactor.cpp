@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-//ifglm==1.0.1//i have 2 version
+//ifglm==1.0.1
 //#define GLM_ENABLE_EXPERIMENTAL
 //
 #define GLM_FORCE_INTRINSICS
