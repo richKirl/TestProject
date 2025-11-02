@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 //ifglm==1.0.1
-#define GLM_ENABLE_EXPERIMENTAL
+//#define GLM_ENABLE_EXPERIMENTAL
 //
 #define GLM_FORCE_INTRINSICS
 #define GLM_FORCE_AVX2
@@ -1489,4 +1489,3 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
-
