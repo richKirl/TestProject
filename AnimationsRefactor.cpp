@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-//ifglm==1.0.1
+//ifglm==1.0.1//i have 2 version
 //#define GLM_ENABLE_EXPERIMENTAL
 //
 #define GLM_FORCE_INTRINSICS
@@ -20,15 +20,10 @@
 #include <iostream>
 #include <fstream>
 #include <random>
-// #include <memory>
 #include <vector>
-// #include <algorithm>
-// #include <chrono>
-// #include <thread>
 #include <string_view>
 #include <mutex>
 #include <sstream>
-// #include <stdexcept>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define sqrt2 1.41421
@@ -264,12 +259,11 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
+inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)//snippet window
 {
     if (!glfwInit())
     {
 
-        // std::cerr << "Failed to initialize GLFW" << std::endl;
         Logger::log(LogLevel::ERROR,"Failed to initialize glfwInit()" +std::to_string(__LINE__) + " " + __FILE__);
         // Handle error, e.g., throw an exception or exit
         // return;
@@ -285,7 +279,6 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     GLFWwindow *window = glfwCreateWindow(800, 600, " window->title.c_str()", NULL, NULL);
     if (!window)
     {
-        // std::cerr << "Failed to create GLFW window" << std::endl;
         Logger::log(LogLevel::ERROR,"Failed to create GLFW window window" +std::to_string(__LINE__)+ " " + __FILE__);
         glfwTerminate(); // Terminate GLFW if window creation fails
         // Handle error
@@ -300,7 +293,6 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
-        // std::cerr << "Failed to initialize GLEW" << std::endl;
         Logger::log(LogLevel::ERROR,"Failed to initialize GLEW glewInit()" +std::to_string(__LINE__)+ " " + __FILE__);
         // Handle error, e.g., throw an exception or exit
         // return;
@@ -311,7 +303,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)
 }
 
 bool firstMouse = true;
-float yaw = -135.0f; // подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float yaw = -315.0f; // подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
@@ -483,7 +475,7 @@ struct Model
     glm::vec3 rA{180, 0, 0};
     glm::quat orientation;
     glm::vec3 sc{.05f, .05f, .05f};
-    glm::vec3 front{0.0f, 0.0f, -1.0f};
+    glm::vec3 front{0.0f, 0.0f, 1.0f};
     float speed;
     int pseudoTimer;//unittime quant
     // bool gotoPatrol;
@@ -792,54 +784,43 @@ void getPoseSIMD(
     // Проверка границ
     if (idx == 0)
         idx = 1;
-    if (idx >= btt.positions.size())
-    {
-        // std::cout << "btt" << std::endl;
-        idx = btt.positions.size() - 1;
-    }
+    // if (idx >= btt.positions.size())
+    // {
+    //     idx = btt.positions.size() - 1;
+    // }cov
 
-    // std::cout<<"TestAfter2 "<<idx << " "<<frac<<std::endl;
-    if (btt.positions.empty() || btt.scales.empty() || btt.rotations.empty())
-    {
-        std::cerr << "Empty bone transform track for " << skeleton.name << std::endl;
-        return;
-    }
+    // if (btt.positions.empty() || btt.scales.empty() || btt.rotations.empty())
+    // {
+    //     std::cerr << "Empty bone transform track for " << skeleton.name << std::endl;
+    //     return;
+    // }cov
     // Интерполяция позиции
     glm::vec3 pos1 = btt.positions[idx - 1];
     glm::vec3 pos2 = btt.positions[idx];
     glm::vec3 position = glm::mix(pos1, pos2, frac);
 
-    // std::cout<<"TestAfter3 "<<idx << " "<<frac<<std::endl;
     // Интерполяция масштаба
     glm::vec3 scale1 = btt.scales[idx - 1];
     glm::vec3 scale2 = btt.scales[idx];
     glm::vec3 scale = glm::mix(scale1, scale2, frac);
 
-    // std::cout<<"TestAfter4 "<<idx << " "<<frac<<std::endl;
-
     glm::quat rot1 = btt.rotations[idx - 1];
     glm::quat rot2 = btt.rotations[idx];
 
-    // std::cout<<"TestAfter5 "<<idx << " "<<frac<<std::endl;
     glm::quat rotation = glm::slerp(rot1, rot2, frac);
 
-    // std::cout<<"TestAfter6 "<<idx << " "<<frac<<std::endl;
     // Создаем локальную матрицу трансформации
     glm::mat4 positionMat = glm::translate(glm::mat4(1.0f), position);
     glm::mat4 rotationMat = glm::toMat4(rotation);
     glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), scale);
     glm::mat4 localTransform = positionMat * rotationMat * scaleMat;
 
-    // std::cout<<"TestAfter7 "<<idx << " "<<frac<<std::endl;
     glm::mat4 globalTransform = parentTransform * localTransform;
     output[skeleton.id] = globalInverseTransform * globalTransform * skeleton.offset;
 
-    // std::cout<<"TestAfter8 "<<idx << " "<<frac<<std::endl;
     for (Bone &child : skeleton.children)
     {
-        // std::cout<<"TestAfter9 "<<idx << " "<<frac<<std::endl;
         getPoseSIMD(animation, child, dt, output, globalTransform, globalInverseTransform);
-        // std::cout<<"TestAfter10 "<<idx << " "<<frac<<std::endl;
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -855,7 +836,6 @@ void CreateModel(Model *model)
 void updateModel(Model *model, float deltaTime, int h)
 {
     int t = abs(h);
-    // model->animtor->pAnimations[t].end;
     if (model->currentTime > model->animtor->pAnimations[t].end)
     {
         if (model->loop && h > 0)
@@ -903,7 +883,6 @@ void updateModel(Model *model, float deltaTime, int h)
         model->currentTime -= deltaTime * model->playbackSpeed;
         model->it = glm::clamp(int(model->currentTime), 0, (int)model->animtor->pAnimations[t].end - 1);
     }
-    // model->animtor->pAnimations[t].poses[model->it];model->precAnim[t][model->it];
     model->currentPose = model->animtor->pAnimations[t].poses[model->it].pose;
 }
 void updateModelL(Model *model, float deltaTime, int h)
@@ -966,10 +945,8 @@ glm::quat rotateOrientationFromCurrentTo(glm::quat &from,glm::quat &to){
 void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader, int n)
 {
     ms->n = n;
-    // modelsOnLevel.instances = instances;
     ms->instances.resize(n);
     int l = underS * ms->n;
-    // std::cout << (float)(sqrt(2)) << std::endl;
     int tC = 0;
     int kC = 0;
     int ccc = 0;
@@ -977,31 +954,19 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
     {
         for (int j = 0; j < l; ++j)
         {
-            // if (kC == 13)
-            //     kC = 0;
-
             Model enemy = TableAnimationModel->models[0];
-            // std::cout << ccc << std::endl;
 
             enemy.name = "Enemy" + std::to_string(ccc);
-            // enemy.shader = &shader;
 
             glm::vec3 pos = glm::vec3(5.0f, 0.0f, 5.0f);
             glm::quat newRotation = glm::angleAxis(glm::radians(enemy.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
             glm::quat current = glm::quat(1,0,0,0);
 
-            // glm::quat rotD=newRotation*glm::inverse(current);
-            // glm::quat final = rotD*current;
             glm::quat final = rotateOrientationFromCurrentTo(current,newRotation);
-            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.z), glm::vec3(0.0f, 0.0f, 1.0f));
             glm::mat4 rotationMatrix = glm::toMat4(newRotation);
             glm::mat4 modelMatrix(1.0f);
             modelMatrix = glm::translate(modelMatrix, pos);
             modelMatrix = modelMatrix * rotationMatrix; // Apply rotation
-            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
-            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
             modelMatrix = glm::scale(modelMatrix, enemy.sc);
             enemy.pos = pos;
             enemy.pseudoTimer = 0;
@@ -1011,8 +976,6 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             enemy.modelMatrix = modelMatrix;
 
             ms->instances[ccc] = enemy;
-
-            // kC++;
             ccc++;
         }
     }
@@ -1021,10 +984,8 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
 void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader)
 {
     ms->n = 10000;
-    // modelsOnLevel.instances = instances;
     ms->instances.resize(10000);
     int l = underS * ms->n;
-    // std::cout << (float)(sqrt(2)) << std::endl;
     int tC = 0;
     int kC = 0;
     int ccc = 0;
@@ -1032,11 +993,9 @@ void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimatio
     {
         for (int j = 0; j < 100; ++j)
         {
-            // if (kC == 13)
-            //     kC = 0;
 
             Model enemy = TableAnimationModel->models[0];
-            // std::cout << ccc << std::endl;
+
 
             enemy.name = "Enemy" + std::to_string(ccc);
             // enemy.shader = &shader;
@@ -1047,15 +1006,12 @@ void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimatio
 
             glm::quat rotD=newRotation*glm::inverse(current);
             glm::quat final = rotD*current;
-            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            //   newRotation = glm::angleAxis(glm::radians(enemy.rA.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
             glm::mat4 rotationMatrix = glm::toMat4(newRotation);
             glm::mat4 modelMatrix(1.0f);
             modelMatrix = glm::translate(modelMatrix, pos);
             modelMatrix = modelMatrix * rotationMatrix; // Apply rotation
-            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.x), glm::vec3(0.0f, 0.0f, 1.0f));
-            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            // modelMatrix = glm::rotate(modelMatrix, glm::radians(enemy.rot.z), glm::vec3(1.0f, 0.0f, 0.0f));
+
             modelMatrix = glm::scale(modelMatrix, enemy.sc);
             enemy.pos = pos;
             enemy.pseudoTimer = 0;
@@ -1066,7 +1022,6 @@ void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimatio
 
             ms->instances[ccc] = enemy;
 
-            // kC++;
             ccc++;
         }
     }
@@ -1081,7 +1036,6 @@ void loadModelB(Model *model, const std::string s, GLuint *modelLoc, GLuint *Bon
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        // std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
         std::string err="ERROR::ASSIMP::";
         err+=importer.GetErrorString() +std::to_string(__LINE__);
         Logger::log(LogLevel::ERROR,err);
@@ -1240,17 +1194,15 @@ int main(int argc, char **argv)
 
     CreateInstancesOnLevel(&modelsOnLevel, &TableAnimationModel, shader, 100);
     // CreateInstancesOnLevel10000(&modelsOnLevel, &TableAnimationModel, shader);
-    // std::cout << sizeof(TableAnimationModel.models[0].animtor->pAnimations[0]) << std::endl;
+
     float angle2 = 1;
     int kl = 0;
     glm::vec3 enemyForward = glm::vec3(0.0f, 0.0f, 1.0f);
     float angle1 = 45.0f;
     modelsOnLevel.instances[0].name ={"Player"};
-    // modelsOnLevel.instances[0].name = "Player";
+
     modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
-    // for (auto &a : modelsOnLevel.instances)
-    //     std::cout << a.name << std::endl;
-    // srand(time(nullptr));
+
     int closePP = 0;
     while (!glfwWindowShouldClose(window))
     {
@@ -1276,7 +1228,6 @@ int main(int argc, char **argv)
         glUseProgram(shader);
         glUniformMatrix4fv(viewProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
 
-        // modelsOnLevel.instances[1].modelMatrix = glm::translate(modelsOnLevel.instances[1].modelMatrix, enemyForward);
         for (auto &a : modelsOnLevel.instances)
         {
             if (a.name != "Player")
@@ -1285,21 +1236,18 @@ int main(int argc, char **argv)
                 { // batle begin :)
                     a.agroend = true;
                     a.agro = false;
-                    // a.patrol = ;
                     a.agrostart = false;
                     a.pseudoTimer = 0;
                     continue;
                 }
                 a.pos += a.speed * a.front * deltaTime;
 
-                // glm::quatLookAt()
 
                 if (a.pseudoTimer == 0)
                 {
                     a.agroend=false;
                     a.patrol = true;
                     float tr = GetRand(0,360);
-                    // std::cout << tr << std::endl;
                     Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
 
 
@@ -1310,7 +1258,7 @@ int main(int argc, char **argv)
                     glm::quat combinedRotation = yawQuat*pitchQuat;
                     glm::quat final = rotateOrientationFromCurrentTo(a.orientation,combinedRotation);
                     a.orientation = final;
-                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, -1)));
+                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));
                     a.frame = 12;
                     a.speed = 10 + rand() % 5;
                 }
@@ -1323,7 +1271,6 @@ int main(int argc, char **argv)
 
                     glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - a.pos);
                     glm::quat temp =  glm::quatLookAt(directionToPlayer, glm::vec3(0,1,0));
-                    // glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
                     glm::quat yawQuat = temp;
                     glm::quat combinedRotation = yawQuat ;
                     glm::quat final = rotateOrientationFromCurrentTo(combinedRotation,combinedRotation);
@@ -1338,28 +1285,14 @@ int main(int argc, char **argv)
                     glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
                     glm::quat temp =  glm::quatLookAt(directionToPlayer, glm::vec3(0,1,0));
                     glm::quat current_quaternion = a.orientation * glm::vec3(0,1,0);
-                    // glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
                     glm::quat yawQuat = temp;
                     glm::quat combinedRotation = yawQuat *pitchQuat;
                     glm::quat final = rotateOrientationFromCurrentTo(current_quaternion,combinedRotation);
                     // a.orientation = glm::mix(a.orientation,final,1.f);
                     a.orientation = final;
                     a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));
-                    // glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - a.pos);
-                    // glm::vec3 forward = glm::normalize(a.pos + a.front);
-                    // float interpolation_factor = 0.1f; // Коэффициент интерполяции
-                    // // glm::quat current_quaternion = glm::rotation(forward, glm::normalize(a.front));
-                    // glm::quat target_quaternion = glm::rotation(forward, glm::normalize(directionToPlayer));
-
-                    // // glm::quat new_quaternion = glm::slerp(a.orientation, target_quaternion, interpolation_factor);
-
-                    // glm::quat final = a.orientation*target_quaternion;
-                    // a.orientation = final;
-                    // // a.orientation =  glm::quatLookAt(a.front, glm::vec3(0,1,0))*final;
-                    // a.front = glm::normalize(glm::rotate(directionToPlayer, glm::vec3(0, 0, -1)));
                 }
                 a.pseudoTimer++;
-                // std::cout<<kl<<std::endl;
             }
         }
         for (auto &m : modelsOnLevel.instances)
@@ -1368,14 +1301,6 @@ int main(int argc, char **argv)
             updateModel(&m, deltaTime, m.frame);
 
             glm::mat4 modelMatrix = glm::mat4(1.0f);
-
-            // Создаем кватернионы по осям
-            // glm::quat newRotationX = glm::angleAxis(glm::radians(m.rA.x), glm::vec3(0.0f, 0.0f, 1.0f)); // типо обратно типо относительно камеры наверно
-            // glm::quat newRotationY = glm::angleAxis(glm::radians(m.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            // glm::quat newRotationZ = glm::angleAxis(glm::radians(m.rA.z), glm::vec3(1.0f, 0.0f, 0.0f));
-
-            // Комбинируем вращения (порядок важен)
-            // m.orientation = newRotationY * newRotationX;
 
             // Конвертируем кватернион в матрицу
             glm::mat4 rotationMatrix = glm::toMat4(m.orientation);
@@ -1387,7 +1312,6 @@ int main(int argc, char **argv)
             // Собираем итоговую модельную матрицу
             modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
             glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-            // }
 
             drawModel(&m);
         }
@@ -1408,11 +1332,9 @@ void processInput(GLFWwindow *window, Model *model)
         glfwSetWindowShouldClose(window, true);
 
     float cameraSpeed = static_cast<float>(20.5 * deltaTime);
-    // glm::vec3 objectPos = glm::vec3(p[3]);
     bool idle = true;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        // model->modelMatrix = glm::translate(model->modelMatrix, cameraFront);
         model->pos += cameraSpeed * cameraFront;
         cameraPos += cameraSpeed * cameraFront;
         animation = 12;
@@ -1420,7 +1342,6 @@ void processInput(GLFWwindow *window, Model *model)
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        // model->modelMatrix = glm::translate(model->modelMatrix, cameraFront * (-1.0f));
         model->pos -= cameraSpeed * cameraFront;
         cameraPos -= cameraSpeed * cameraFront;
         animation = -12;
@@ -1428,7 +1349,6 @@ void processInput(GLFWwindow *window, Model *model)
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        // model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)) * (-1.0f));
         model->pos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 4;
@@ -1436,7 +1356,6 @@ void processInput(GLFWwindow *window, Model *model)
     }
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        // model->modelMatrix = glm::translate(model->modelMatrix, glm::normalize(glm::cross(cameraFront, cameraUp)));
         model->pos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         animation = 8;
