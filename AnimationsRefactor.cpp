@@ -1,3 +1,4 @@
+//code based on this code https://github.com/hasinaxp/skeletal_animation-_assimp_opengl
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
