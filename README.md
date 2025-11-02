@@ -1,8 +1,8 @@
 # TestProject
 
-fix - orientation and set simple AI, but need fixes global orient< so yes in this time it global bug ;)
+fix - orientation and set simple AI, but need fixes global orient, so yes in this time it global bug [01]
 
-now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice ;)
+now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice 
 
 stress test 10000 :)
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
