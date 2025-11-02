@@ -1,6 +1,6 @@
 # TestProject
 
-fix - orientation and set simple AI
+fix - orientation and set simple AI, but need fixes global orient< so yes in this time it global bug ;)
 
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice ;)
 
