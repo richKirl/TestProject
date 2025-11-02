@@ -1,5 +1,7 @@
 # TestProject
 
+fix - orientation and set simple AI
+
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice ;)
 
 stress test 10000 :)
