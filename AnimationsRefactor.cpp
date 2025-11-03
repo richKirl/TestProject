@@ -1256,7 +1256,7 @@ int main(int argc, char **argv)
                     a.agroend=false;
                     a.patrol = true;
                     float tr = GetRand(0,360);
-                    Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
+                    // Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
 
 
                     a.rA.y = glm::degrees(tr);
@@ -1293,6 +1293,9 @@ int main(int argc, char **argv)
                     glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
                     glm::quat temp =  glm::quatLookAt(directionToPlayer, glm::vec3(0,1,0));
                     glm::quat current_quaternion = a.orientation * glm::vec3(0,1,0);
+                    // if(float aan=glm::dot(temp,current_quaternion)){
+                        // Logger::log(LogLevel::INFO,std::to_string(aan));
+                    // }
                     glm::quat yawQuat = temp;
                     glm::quat combinedRotation = yawQuat *pitchQuat;
                     glm::quat final = rotateOrientationFromCurrentTo(current_quaternion,combinedRotation);
@@ -1416,4 +1419,3 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));//!
 }
-
