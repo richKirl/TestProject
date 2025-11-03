@@ -167,6 +167,7 @@ private:
         }
     }
 };
+#define outputInfo(X) Logger::log(LogLevel::INFO,X)
 //////////////////////////////////////////////////////////////////////
 
 
@@ -1212,7 +1213,8 @@ int main(int argc, char **argv)
 
     modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
 
-    int closePP = 0;
+    outputInfo("Hello World");
+
     while (!glfwWindowShouldClose(window))
     {
         glm::vec3 objectPos = glm::vec3(modelsOnLevel.instances[0].pos);
@@ -1227,6 +1229,8 @@ int main(int argc, char **argv)
         lastTime = currentTime;
         // input
         // -----
+
+
 
         processInput(window, &modelsOnLevel.instances[0]);
 
@@ -1419,3 +1423,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));//!
 }
+
