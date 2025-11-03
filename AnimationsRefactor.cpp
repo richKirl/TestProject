@@ -315,7 +315,7 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)//snippet wind
 }
 
 bool firstMouse = true;
-float yaw = -315.0f; // подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float yaw = -315.0f;// !// подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
@@ -323,7 +323,7 @@ float fov = 45.0f;
 int animation = 0;
 // camera
 glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 50.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);// !
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 // timing
 float deltaTime = 0.0f; // time between current frame and last frame
@@ -1266,7 +1266,7 @@ int main(int argc, char **argv)
                     glm::quat combinedRotation = yawQuat*pitchQuat;
                     glm::quat final = rotateOrientationFromCurrentTo(a.orientation,combinedRotation);
                     a.orientation = final;
-                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));
+                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));//!
                     a.frame = 12;
                     a.speed = 10 + rand() % 5;
                 }
@@ -1283,7 +1283,7 @@ int main(int argc, char **argv)
                     glm::quat combinedRotation = yawQuat ;
                     glm::quat final = rotateOrientationFromCurrentTo(combinedRotation,combinedRotation);
                     // a.orientation = glm::mix(a.orientation,combinedRotation,0.1f);
-                    a.front = glm::normalize(glm::rotate(temp, glm::vec3(0, 0, -1)));
+                    a.front = glm::normalize(glm::rotate(temp, glm::vec3(0, 0, -1)));//!
 
                     a.speed = 20 + rand() % 5;
                 }
@@ -1298,7 +1298,7 @@ int main(int argc, char **argv)
                     glm::quat final = rotateOrientationFromCurrentTo(current_quaternion,combinedRotation);
                     // a.orientation = glm::mix(a.orientation,final,1.f);
                     a.orientation = final;
-                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));
+                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));//!
                 }
                 a.pseudoTimer++;
             }
@@ -1323,7 +1323,7 @@ int main(int argc, char **argv)
 
             drawModel(&m);
         }
-        // angle+=5.0f;
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -1403,7 +1403,7 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (pitch > 89.0f)
         pitch = 89.0f;
-    if (pitch < -89.0f)
+    else if (pitch < -89.0f)
         pitch = -89.0f;
 
     // Создаем кватернионы по осям
@@ -1414,6 +1414,6 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     glm::quat combinedRotation = yawQuat * pitchQuat;
 
     // Применяем к базовому вектору направления
-    cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
+    cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));//!
 }
 
