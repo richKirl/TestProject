@@ -52,6 +52,7 @@ struct LogOutput {
 
 class Logger {
 public:
+    //инициализация
     static void init(LogLevel level = LogLevel::INFO, std::string_view filename = "", LogLevel fileLevel = LogLevel::DEBUG) {
         auto& inst = getInstance();
         inst.setLogLevel(level);
@@ -59,15 +60,15 @@ public:
             inst.addOutputFile(std::string(filename), fileLevel);
         }
     }
-
+    //установка уровня логирования
     static void setLevel(LogLevel level) {
         getInstance().setLogLevel(level);
     }
-
+    //добавление файла в который будет производиться лог
     static void addOutputFile(std::string_view filename, LogLevel level = LogLevel::DEBUG) {
         getInstance().addFileOutput(std::string(filename), level);
     }
-
+    //добавление потока например std::cout
     static void addOutputStream(std::ostream *s, LogLevel level = LogLevel::DEBUG) {
         getInstance().addOutput(s, level);
     }
@@ -91,7 +92,7 @@ public:
         (oss << ... << rest);
         getInstance().logMessage(level, oss.str());
     }
-
+    //закрытие файла/ов
     static void shutdown() {
         auto& inst = getInstance();
         for (auto& out : inst.outputs) {
@@ -114,10 +115,12 @@ private:
 
     Logger() = default;
 
+    //установка уровня логирования типом логирования
     void setLogLevel(LogLevel level) {
         std::lock_guard<std::mutex> lock(mutex_);
         currentLevel = level;
     }
+    //добавление потока для логирования например std::cout
     void addOutput(std::ostream *s, LogLevel level) {
         LogOutput out;
         // out.fileStream.open(std::string(filename));
@@ -126,6 +129,7 @@ private:
         out.isFile = false;
         outputs.push_back(std::move(out));
     }
+    //добавление файла для логирования
     void addFileOutput(std::string_view filename, LogLevel level) {
         LogOutput out;
         out.fileStream.open(std::string(filename));
@@ -134,7 +138,7 @@ private:
         out.isFile = true;
         outputs.push_back(std::move(out));
     }
-
+    //логирование
     void logMessage(LogLevel level, std::string_view message) {
         if (level > currentLevel) return;
 
@@ -142,9 +146,6 @@ private:
         std::string prefix = levelToString(level);
         std::string t{"[" + prefix + "] " + std::string(message)};
         std::string_view output{t};
-
-        // Вывод в консоль
-        // std::cout << output << std::endl;
 
         // Вывод в файлы
         for (auto& file : outputs) {
@@ -156,7 +157,7 @@ private:
             }
         }
     }
-
+    //получение строкового литерала уровня из типа уровня
     std::string levelToString(LogLevel level) {
         switch (level) {
         case LogLevel::ERROR: return "ERROR";
@@ -168,6 +169,9 @@ private:
     }
 };
 #define outputInfo(X) Logger::log(LogLevel::INFO,X)
+#define outputWarning(X) Logger::log(LogLevel::WARNING,X)
+#define outputError(X) Logger::log(LogLevel::ERROR,X)
+#define outputDebug(X) Logger::log(LogLevel::DEBUG,X)
 //////////////////////////////////////////////////////////////////////
 
 
@@ -484,19 +488,19 @@ struct Model
     GLuint *shader;
     ModelLocs *locs;
 
-    glm::vec3 pos;
-    glm::vec3 rA{180, 0, 0};
-    glm::quat orientation;
-    glm::vec3 sc{.05f, .05f, .05f};
-    glm::vec3 front{0.0f, 0.0f, 1.0f};
-    float speed;
-    int pseudoTimer;//unittime quant
-    // bool gotoPatrol;
-    bool patrol;//state
-    bool agro;//state
-    bool agrostart;//state
-    bool agroend;//state
-    glm::mat4 modelMatrix;
+    // glm::vec3 pos;
+    // glm::vec3 rA{180, 0, 0};
+    // glm::quat orientation;
+    // glm::vec3 sc{.05f, .05f, .05f};
+    // glm::vec3 front{0.0f, 0.0f, 1.0f};
+    // float speed;
+    // int pseudoTimer;//unittime quant
+    // // bool gotoPatrol;
+    // bool patrol;//state
+    // bool agro;//state
+    // bool agrostart;//state
+    // bool agroend;//state
+    // glm::mat4 modelMatrix;
 
     unsigned int boneCount = 0;
     glm::mat4 globalInverseTransform;
@@ -1138,11 +1142,37 @@ void LoadAnimationModel(Model &model, const std::string s, GLuint *modelLoc, GLu
     }
 }
 ///////////////////////////////////////////////////////////////////////////
-// struct Patrol
-// {
-//     glm::vec3 min,max;
-// };
-
+/// \brief The Patrol class
+///[0 0 1 1 1 1 1 1] behavior compress system
+/// 0 - reserved
+/// 0 - reserved
+/// 1 - goto
+/// 1 - patrol
+/// 1 - agro
+/// 1 - agrotart
+/// 1 - agroend
+/// 1 - battle
+struct Patrol
+{
+    glm::vec3 pos,min,max;//area for patrol
+    float distance;//distance from patrol
+    bool gotoPatrol;//state
+    bool patrol;//state
+    bool agro;//state
+    bool agrostart;//state
+    bool agroend;//state
+    bool battle;//battlemode
+};
+struct Creature
+{
+    Model *model;
+    Patrol *patrolBehavior;
+    glm::vec3 pos;
+    glm::vec3 rA{180, 0, 0};//from model - example blender
+    glm::quat orientation;
+    glm::vec3 sc{.05f, .05f, .05f};//from model - example blender
+    glm::vec3 front{0.0f, 0.0f, 1.0f};//! //forward way
+};
 // void uniquePatrol(Patrol *patrol,glm::vec3 pos,int w,int h){
 
 // }
@@ -1155,17 +1185,9 @@ void LoadAnimationModel(Model &model, const std::string s, GLuint *modelLoc, GLu
 //     glm::quat orientation;
 //     glm::vec3 sc{.05f, .05f, .05f};
 //     glm::vec3 front{0.0f, 0.0f, -1.0f};
-// };
+// };//
 
-// struct Creature
-// {
-//     int index;
-//     glm::vec3 pos;
-//     glm::vec3 rA{180, 0, 0};
-//     glm::quat orientation;
-//     glm::vec3 sc{.05f, .05f, .05f};
-//     glm::vec3 front{0.0f, 0.0f, -1.0f};
-// };
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
@@ -1259,7 +1281,7 @@ int main(int argc, char **argv)
                 {
                     a.agroend=false;
                     a.patrol = true;
-                    float tr = GetRand(0,360);
+                    float tr = GetRand(0,360);//anglereposition
                     // Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
 
 
@@ -1423,3 +1445,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));//!
 }
+
