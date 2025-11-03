@@ -232,8 +232,7 @@ inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
     if (!success)
     {
         glGetShaderInfoLog(vShader, 512, 0, info_log);
-        std::cout << "vertex shader compilation failed!\n"
-                  << info_log << std::endl;
+        std::cout << "vertex shader compilation failed!\n" << info_log << std::endl;
     }
     glShaderSource(fShader, 1, &fragmentStr, 0);
     glCompileShader(fShader);
@@ -241,8 +240,7 @@ inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
     if (!success)
     {
         glGetShaderInfoLog(fShader, 512, 0, info_log);
-        std::cout << "fragment shader compilation failed!\n"
-                  << info_log << std::endl;
+        std::cout << "fragment shader compilation failed!\n" << info_log << std::endl;
     }
 
     glAttachShader(program, vShader);
@@ -252,8 +250,7 @@ inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
     if (!success)
     {
         glGetProgramInfoLog(program, 512, 0, info_log);
-        std::cout << "program linking failed!\n"
-                  << info_log << std::endl;
+        std::cout << "program linking failed!\n" << info_log << std::endl;
     }
     glDetachShader(program, vShader);
     glDeleteShader(vShader);
@@ -1211,11 +1208,7 @@ int main(int argc, char **argv)
     CreateInstancesOnLevel(&modelsOnLevel, &TableAnimationModel, shader, 100);
     // CreateInstancesOnLevel10000(&modelsOnLevel, &TableAnimationModel, shader);
 
-    float angle2 = 1;
-    int kl = 0;
-    glm::vec3 enemyForward = glm::vec3(0.0f, 0.0f, 1.0f);
-    float angle1 = 45.0f;
-    modelsOnLevel.instances[0].name ={"Player"};
+    modelsOnLevel.instances[0].name="Player";
 
     modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
 
