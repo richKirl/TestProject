@@ -1270,7 +1270,7 @@ int main(int argc, char **argv)
                     glm::quat combinedRotation = yawQuat*pitchQuat;
                     glm::quat final = rotateOrientationFromCurrentTo(a.orientation,combinedRotation);
                     a.orientation = final;
-                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));//!
+                    a.front = a.orientation * glm::vec3(0,0,1);//!
                     a.frame = 12;
                     a.speed = 10 + rand() % 5;
                 }
@@ -1287,7 +1287,7 @@ int main(int argc, char **argv)
                     glm::quat combinedRotation = yawQuat ;
                     glm::quat final = rotateOrientationFromCurrentTo(combinedRotation,combinedRotation);
                     // a.orientation = glm::mix(a.orientation,combinedRotation,0.1f);
-                    a.front = glm::normalize(glm::rotate(temp, glm::vec3(0, 0, -1)));//!
+                    a.front = a.orientation * glm::vec3(0,0,1);//!
 
                     a.speed = 20 + rand() % 5;
                 }
@@ -1305,7 +1305,7 @@ int main(int argc, char **argv)
                     glm::quat final = rotateOrientationFromCurrentTo(current_quaternion,combinedRotation);
                     // a.orientation = glm::mix(a.orientation,final,1.f);
                     a.orientation = final;
-                    a.front = glm::normalize(glm::rotate(a.orientation, glm::vec3(0, 0, 1)));//!
+                    a.front = a.orientation * glm::vec3(0,0,1);//!
                 }
                 a.pseudoTimer++;
             }
@@ -1423,4 +1423,3 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));//!
 }
-
