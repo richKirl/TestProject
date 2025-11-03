@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 //ifglm==1.0.1
-//#define GLM_ENABLE_EXPERIMENTAL
+#define GLM_ENABLE_EXPERIMENTAL
 //
 #define GLM_FORCE_INTRINSICS
 #define GLM_FORCE_AVX2
@@ -68,6 +68,10 @@ public:
         getInstance().addFileOutput(std::string(filename), level);
     }
 
+    static void addOutputStream(std::ostream *s, LogLevel level = LogLevel::DEBUG) {
+        getInstance().addOutput(s, level);
+    }
+
     // Логирование сообщения с уровнем
     static void log(LogLevel level, std::string_view message) {
         getInstance().logMessage(level, message);
@@ -114,7 +118,14 @@ private:
         std::lock_guard<std::mutex> lock(mutex_);
         currentLevel = level;
     }
-
+    void addOutput(std::ostream *s, LogLevel level) {
+        LogOutput out;
+        // out.fileStream.open(std::string(filename));
+        out.stream = s;
+        out.level = level;
+        out.isFile = false;
+        outputs.push_back(std::move(out));
+    }
     void addFileOutput(std::string_view filename, LogLevel level) {
         LogOutput out;
         out.fileStream.open(std::string(filename));
@@ -133,12 +144,15 @@ private:
         std::string_view output{t};
 
         // Вывод в консоль
-        std::cout << output << std::endl;
+        // std::cout << output << std::endl;
 
         // Вывод в файлы
         for (auto& file : outputs) {
             if (file.isFile) {
                 file.fileStream << output << std::endl;
+            }
+            if(file.stream){
+                *file.stream << output << std::endl;
             }
         }
     }
@@ -1158,6 +1172,7 @@ void LoadAnimationModel(Model &model, const std::string s, GLuint *modelLoc, GLu
 int main(int argc, char **argv)
 {
     Logger::init(LogLevel::DEBUG, "", LogLevel::WARNING);
+    Logger::addOutputStream(&std::cout,LogLevel::DEBUG);
     // init
     int windowWidth, windowHeight;
     GLFWwindow *window = initWindow(windowWidth, windowHeight);
@@ -1222,7 +1237,6 @@ int main(int argc, char **argv)
 
         processInput(window, &modelsOnLevel.instances[0]);
 
-        // if(angle==360)angle=0;
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -1409,3 +1423,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     // Применяем к базовому вектору направления
     cameraFront = glm::normalize(glm::rotate(combinedRotation, glm::vec3(1, 0, -1)));
 }
+
