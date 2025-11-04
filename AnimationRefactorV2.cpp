@@ -364,7 +364,24 @@ inline unsigned int createShader(const char *vertexStr, const char *fragmentStr)
 
     return program;
 }
-
+/////////////////////////////////////////////////////////////////////
+//this lines only for this test
+int windowWidth, windowHeight;
+//
+bool firstMouse = true;
+float yaw = -315.0f;// !// подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float pitch = 0.0f;
+float lastX = 800.0f / 2.0;
+float lastY = 600.0 / 2.0;
+float fov = 45.0f;
+int animation = 0;
+// camera
+glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 50.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);// !
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+// timing
+float deltaTime = 0.0f; // time between current frame and last frame
+//////////////////////////////////////////////////////////////////////
 /*
 opengl skeletal animation demo
 */
@@ -386,6 +403,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    windowWidth=width;
+    windowHeight=height;
 }
 ////////////////////////////////////////////////////////////
 /// \brief mouse_callback
@@ -413,7 +432,8 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)//snippet wind
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+    windowWidth = 800;
+    windowHeight = 600;
     GLFWwindow *window = glfwCreateWindow(800, 600, " window->title.c_str()", NULL, NULL);
     if (!window)
     {
@@ -437,19 +457,6 @@ inline GLFWwindow *initWindow(int &windowWidth, int &windowHeight)//snippet wind
     return window;
 }
 
-bool firstMouse = true;
-float yaw = -315.0f;// !// подобрано // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-float fov = 45.0f;
-int animation = 0;
-// camera
-glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 50.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);// !
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-// timing
-float deltaTime = 0.0f; // time between current frame and last frame
 const char *vertexShaderSource = R"(
     #version 460 core
     layout (location = 0) in vec3 position;
@@ -1204,7 +1211,11 @@ glm::quat rotateOrientationFromCurrentTo(glm::quat &from,glm::quat &to){
 
     return rotD*current;
 }
-
+//////////////////////////////////////////////////
+/// \brief setOrientToPoint
+/// \param a
+/// \param point
+///
 void setOrientToPoint(Creature *a,glm::vec3 point){
     glm::vec3 directionToPlayer = glm::normalize(point - a->pos);
     glm::quat pitchQuat = glm::angleAxis(glm::radians(a->rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -1218,7 +1229,11 @@ void setOrientToPoint(Creature *a,glm::vec3 point){
     a->orientation = final;
     a->front = a->orientation * glm::vec3(0,0,1);//!
 }
-
+//////////////////////////////////////////////////
+/// \brief setOrientToAngle
+/// \param a
+/// \param angle
+///
 void setOrientToAngle(Creature *a,float angle){
     a->rA.y = glm::degrees(angle);
     // Создаем кватернионы по осям
@@ -1496,7 +1511,7 @@ int main(int argc, char **argv)
     Logger::init(LogLevel::DEBUG, "", LogLevel::WARNING);
     Logger::addOutputStream(&std::cout,LogLevel::DEBUG);
     // init
-    int windowWidth, windowHeight;
+
     GLFWwindow *window = initWindow(windowWidth, windowHeight);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -1546,6 +1561,8 @@ int main(int argc, char **argv)
         cameraPos = objectPos + modelsOnLevel.instances[0].front * distanceBehind + glm::vec3(0.0f, -7, 0.0f);
 
         modelsOnLevel.instances[0].frame = animation;
+
+        projectionMatrix = glm::perspective(75.0f, (float)windowWidth/windowHeight, 0.01f, 10000.0f);
         viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         viewProjectionMatrix = projectionMatrix * viewMatrix;
         float currentTime = glfwGetTime();
