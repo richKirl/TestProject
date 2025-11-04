@@ -1285,11 +1285,7 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             glm::quat current = glm::quat(1,0,0,0);
 
             glm::quat final = rotateOrientationFromCurrentTo(current,newRotation);
-            glm::mat4 rotationMatrix = glm::toMat4(newRotation);
-            glm::mat4 modelMatrix(1.0f);
-            modelMatrix = glm::translate(modelMatrix, pos);
-            modelMatrix = modelMatrix * rotationMatrix; // Apply rotation
-            modelMatrix = glm::scale(modelMatrix, creature.sc);
+
             creature.pos = pos;
             creature.pseudoTimer = 0;
             creature.orientation = final;
@@ -1590,15 +1586,17 @@ int main(int argc, char **argv)
                     a.patrolBehavior->agroend = true;
                     a.patrolBehavior->agro = false;
                     a.patrolBehavior->agrostart = false;
+                    a.patrolBehavior->gotoPatrol=true;//for this test
                     a.pseudoTimer = 0;
                     continue;
                 }
                 a.pos += a.speed * a.front * deltaTime;
 
 
-                if (a.pseudoTimer == 0)
+                if (a.patrolBehavior->gotoPatrol)
                 {
                     a.patrolBehavior->agroend=false;
+                    a.patrolBehavior->gotoPatrol=false;
                     a.patrolBehavior->patrol = true;
                     float tr = GetRand(0,360);//anglereposition
                     // Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
