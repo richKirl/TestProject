@@ -29,8 +29,9 @@
 #include "stb_image.h"
 #define sqrt2 1.41421
 #define underS 0.1
-// g++-14 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
-// clang++-20 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+// g++-14 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor{V2}.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+// clang++-20 -std=c++26 -O3 -msse4.2 -mavx2 -ffast-math AnimationsRefactor{V2}.cpp -o parsing  -DSHM -I/usr/include/freetype2/ -lGL -lGLU -lGLEW -lglfw -lm -lfreetype -lassimp
+// or cmake
 
 
 //////////////////////////////////////////////////////////////////////
@@ -1735,18 +1736,4 @@ void mouse_callback(GLFWwindow *window, double xposIn, double yposIn)
     cameraFront = combinedRotation * glm::vec3(1,0,-1);//!
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
-// int frame = 0;
-// glm::vec3 pos;
-// glm::vec3 rA{180, 0, 0};
-// glm::quat orientation;
-// glm::vec3 sc{.05f, .05f, .05f};
-// glm::vec3 front{0.0f, 0.0f, 1.0f};
-// float speed;
-// int pseudoTimer;//unittime quant
-// // bool gotoPatrol;
-// bool patrol;//state
-// bool agro;//state
-// bool agrostart;//state
-// bool agroend;//state
-// glm::mat4 modelMatrix;
-/////////////////////////////////////////////////////////////////////////////////////////////
+
