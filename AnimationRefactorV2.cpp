@@ -1083,7 +1083,7 @@ void CreateModel(Model *model)
 /// \brief updateModel
 /// \param model
 /// \param deltaTime
-/// \param h
+/// \param h (>0 вперёд, <0 в обратном порядке)
 ///
 void updateModel(Creature *model, float deltaTime, int h)
 {
@@ -1142,7 +1142,7 @@ void updateModel(Creature *model, float deltaTime, int h)
 /// \param model
 /// \param deltaTime
 /// \param h
-///
+/// update for unpack animations
 void updateModelL(Model *model, float deltaTime, int h)
 {
     if (model->currentTime > model->animations->animations[h].duration)
@@ -1253,14 +1253,12 @@ void setOrientToAngle(Creature *a,float angle){
 /// \param TableAnimationModel
 /// \param shader
 /// \param n
-///
+/// testFunction create *Creature* *Patrol* and set *Model*
 void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader, int n)
 {
     ms->n = n;
     ms->instances.resize(n);
     int l = underS * ms->n;
-    // int tC = 0;
-    // int kC = 0;
     int ccc = 0;
     for (int i = 0; i < l; ++i)
     {
@@ -1278,7 +1276,7 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             *enemy = TableAnimationModel->models[0];
             creature.model= enemy;
             creature.patrolBehavior=patrol;
-            creature.name = "Enemy" + std::to_string(ccc);
+            creature.name = "Creature" + std::to_string(ccc);
 
             glm::vec3 pos = glm::vec3(5.0f, 0.0f, 5.0f);
             glm::quat newRotation = glm::angleAxis(glm::radians(creature.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -1291,7 +1289,6 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
             creature.orientation = final;
             creature.frame = 12;
             creature.speed = 10;
-            // creature.modelMatrix = modelMatrix;
 
             ms->instances[ccc] = creature;
             ccc++;
@@ -1305,48 +1302,49 @@ void CreateInstancesOnLevel(ModelOnLevel *ms, AnimationModel *TableAnimationMode
 /// \param ms
 /// \param TableAnimationModel
 /// \param shader
-///
-// void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader)
-// {
-//     ms->n = 10000;
-//     ms->instances.resize(10000);
-//     // int l = underS * ms->n;
-//     // int tC = 0;
-//     // int kC = 0;
-//     int ccc = 0;
-//     for (int i = 0; i < 100; ++i)
-//     {
-//         for (int j = 0; j < 100; ++j)
-//         {
+/// stress test function for 10000 models
+void CreateInstancesOnLevel10000(ModelOnLevel *ms, AnimationModel *TableAnimationModel, uint &shader)
+{
+    ms->n = 10000;
+    ms->instances.resize(10000);
 
-//             Model enemy = TableAnimationModel->models[0];
-//             Creature creature;
-//             creature.model=enemy;
-//             creature.name = "Enemy" + std::to_string(ccc);
+    int ccc = 0;
+    for (int i = 0; i < 100; ++i)
+    {
+        for (int j = 0; j < 100; ++j)
+        {
 
-//             glm::vec3 pos = glm::vec3(5.0f, 0.0f, 5.0f);
-//             glm::quat newRotation = glm::angleAxis(glm::radians(creature.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
-//             glm::quat current = glm::quat(1,0,0,0);
+            Model *enemy = new Model;
+            Patrol *patrol = new Patrol;
+            patrol->gotoPatrol=true;
+            patrol->patrol=false;
+            patrol->agro=false;
+            patrol->agrostart=false;
+            patrol->agroend=false;
+            patrol->battle=false;
+            Creature creature;
+            *enemy = TableAnimationModel->models[0];
+            creature.model= enemy;
+            creature.patrolBehavior=patrol;
+            creature.name = "Creature" + std::to_string(ccc);
 
-//             glm::quat final = rotateOrientationFromCurrentTo(current,newRotation);
-//             glm::mat4 rotationMatrix = glm::toMat4(newRotation);
-//             glm::mat4 modelMatrix(1.0f);
-//             modelMatrix = glm::translate(modelMatrix, pos);
-//             modelMatrix = modelMatrix * rotationMatrix; // Apply rotation
-//             modelMatrix = glm::scale(modelMatrix, creature.sc);
-//             creature.pos = pos;
-//             creature.pseudoTimer = 0;
-//             creature.orientation = final;
-//             creature.frame = 12;
-//             creature.speed = 10;
-//             // creature.modelMatrix = modelMatrix;
+            glm::vec3 pos = glm::vec3(5.0f, 0.0f, 5.0f);
+            glm::quat newRotation = glm::angleAxis(glm::radians(creature.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            glm::quat current = glm::quat(1,0,0,0);
 
-//             ms->instances[ccc] = creature;
+            glm::quat final = rotateOrientationFromCurrentTo(current,newRotation);
 
-//             ccc++;
-//         }
-//     }
-// }
+            creature.pos = pos;
+            creature.pseudoTimer = 0;
+            creature.orientation = final;
+            creature.frame = 12;
+            creature.speed = 10;
+
+            ms->instances[ccc] = creature;
+            ccc++;
+        }
+    }
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief loadModelB
 /// \param model
