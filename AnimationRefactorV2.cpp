@@ -1203,6 +1203,31 @@ glm::quat rotateOrientationFromCurrentTo(glm::quat &from,glm::quat &to){
 
     return rotD*current;
 }
+
+void setOrientToPoint(Creature *a,glm::vec3 point){
+    glm::vec3 directionToPlayer = glm::normalize(point - a->pos);
+    glm::quat pitchQuat = glm::angleAxis(glm::radians(a->rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::quat temp =  glm::quatLookAt(directionToPlayer, glm::vec3(0,1,0));
+    glm::quat current_quaternion = a->orientation * glm::vec3(0,1,0);
+
+    glm::quat yawQuat = temp;
+    glm::quat combinedRotation = yawQuat *pitchQuat;
+    glm::quat final = rotateOrientationFromCurrentTo(current_quaternion,combinedRotation);
+
+    a->orientation = final;
+    a->front = a->orientation * glm::vec3(0,0,1);//!
+}
+
+void setOrientToAngle(Creature *a,float angle){
+    a->rA.y = glm::degrees(angle);
+    // Создаем кватернионы по осям
+    glm::quat pitchQuat = glm::angleAxis(glm::radians(a->rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
+    glm::quat yawQuat = glm::angleAxis(glm::radians(a->rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::quat combinedRotation = yawQuat*pitchQuat;//aply transform
+    glm::quat final = rotateOrientationFromCurrentTo(a->orientation,combinedRotation);
+    a->orientation = final;
+    a->front = a->orientation * glm::vec3(0,0,1);//!
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // testFunctions
 //standardFUnction
@@ -1560,15 +1585,7 @@ int main(int argc, char **argv)
                     float tr = GetRand(0,360);//anglereposition
                     // Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
 
-
-                    a.rA.y = glm::degrees(tr);
-                    // Создаем кватернионы по осям
-                    glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f)); // типо прямо
-                    glm::quat yawQuat = glm::angleAxis(glm::radians(a.rA.y), glm::vec3(0.0f, 1.0f, 0.0f));
-                    glm::quat combinedRotation = yawQuat*pitchQuat;
-                    glm::quat final = rotateOrientationFromCurrentTo(a.orientation,combinedRotation);
-                    a.orientation = final;
-                    a.front = a.orientation * glm::vec3(0,0,1);//!
+                    setOrientToAngle(&a,tr);
                     a.frame = 12;
                     a.speed = 10 + GetRand(1,5);
                 }
@@ -1579,30 +1596,13 @@ int main(int argc, char **argv)
                     a.patrolBehavior->patrol = false;
                     a.patrolBehavior->agrostart = true;
 
-                    glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - a.pos);
-                    glm::quat temp =  glm::quatLookAt(directionToPlayer, glm::vec3(0,1,0));
-                    glm::quat yawQuat = temp;
-                    glm::quat combinedRotation = yawQuat ;
-                    glm::quat final = rotateOrientationFromCurrentTo(combinedRotation,combinedRotation);
-                    a.orientation = final;
-                    // a.orientation = glm::mix(a.orientation,combinedRotation,0.1f);
-                    a.front = a.orientation * glm::vec3(0,0,1);//!
-
+                    setOrientToPoint(&a,modelsOnLevel.instances[0].pos);
                     a.speed = 20 + GetRand(1,5);
                 }
 
                 else if (a.patrolBehavior->agrostart){
-                    glm::vec3 directionToPlayer = glm::normalize(modelsOnLevel.instances[0].pos - a.pos);
-                    glm::quat pitchQuat = glm::angleAxis(glm::radians(a.rA.x), glm::vec3(1.0f, 0.0f, 0.0f));
-                    glm::quat temp =  glm::quatLookAt(directionToPlayer, glm::vec3(0,1,0));
-                    glm::quat current_quaternion = a.orientation * glm::vec3(0,1,0);
 
-                    glm::quat yawQuat = temp;
-                    glm::quat combinedRotation = yawQuat *pitchQuat;
-                    glm::quat final = rotateOrientationFromCurrentTo(current_quaternion,combinedRotation);
-                    // a.orientation = glm::mix(a.orientation,final,1.f);
-                    a.orientation = final;
-                    a.front = a.orientation * glm::vec3(0,0,1);//!
+                    setOrientToPoint(&a,modelsOnLevel.instances[0].pos);
                 }
                 a.pseudoTimer++;
             }
