@@ -243,10 +243,10 @@ private:
     }
 };
 ////////////////////////////////////////////////////////////
-#define outputInfo(X) Logger::log(LogLevel::INFO,X)
-#define outputWarning(X) Logger::log(LogLevel::WARNING,X)
-#define outputError(X) Logger::log(LogLevel::ERROR,X)
-#define outputDebug(X) Logger::log(LogLevel::DEBUG,X)
+#define outputInfo(...) Logger::log(LogLevel::INFO,__VA_ARGS__)
+#define outputWarning(...) Logger::log(LogLevel::WARNING,__VA_ARGS__)
+#define outputError(...) Logger::log(LogLevel::ERROR,__VA_ARGS__)
+#define outputDebug(...) Logger::log(LogLevel::DEBUG,__VA_ARGS__)
 //////////////////////////////////////////////////////////////////////
 
 
@@ -612,7 +612,15 @@ struct PrecomputedAnimation
     int start;
     int end;
 };
-
+//////////////////////////////////////////////////////////
+/// \brief The FrameName class
+///
+struct FrameName{
+    std::unordered_map<std::string_view,int> frames;
+};
+//////////////////////////////////////////////////////////
+/// \brief The Animator class
+///
 struct Animator
 {
     std::vector<PrecomputedAnimation> pAnimations;
@@ -644,6 +652,7 @@ struct Model
     GLuint *shader;
     ModelLocs *locs;
 
+    FrameName frameName;
     Animator *animtor;
 
     unsigned int boneCount = 0;
@@ -665,21 +674,28 @@ struct Patrol
     float distance;//distance from patrol
     bool gotoPatrol;//state
     bool patrol;//state
+    bool idle;
     bool agro;//state
     bool agrostart;//state
     bool agroend;//state
     bool battle;//battlemode
 };
+
+
+///////////////////////////////////////////////////////////////////
+/// \brief The Creature class
+///
 struct Creature
 {
-    Model *model;
-    Patrol *patrolBehavior;
     std::string name;
     glm::quat orientation;
     glm::vec3 pos;
     glm::vec3 rA{180, 0, 0};//from model - example blender
     glm::vec3 sc{.05f, .05f, .05f};//from model - example blender
     glm::vec3 front{0.0f, 0.0f, 1.0f};//! //forward way
+    Model *model;
+    Patrol *patrolBehavior;
+
     float speed;
     int pseudoTimer;//unittime quant
     int frame;
@@ -885,6 +901,57 @@ void loadAnimation(const aiScene *scene, Animation &animation, int i)
     // std::cout << "scene->mNumAnimations " << scene->mNumAnimations << std::endl;
     aiAnimation *anim = scene->mAnimations[i];
     // std::cout << "Name " << scene->mAnimations[i]->mName.C_Str() << std::endl;
+    std::string_view temp=scene->mAnimations[i]->mName.C_Str();
+    size_t np=temp.find_last_of("|");
+    outputInfo("Name: ",temp.substr(np+1));
+    if (anim->mTicksPerSecond != 0.0f)
+        animation.ticksPerSecond = anim->mTicksPerSecond;
+    else
+        animation.ticksPerSecond = 1.0f;
+
+    animation.duration = anim->mDuration;
+    animation.boneTransforms = {};
+
+    // load positions rotations and scales for each bone
+    //  each channel represents each bone
+    for (int i = 0; i < anim->mNumChannels; i++)
+    {
+        aiNodeAnim *channel = anim->mChannels[i];
+        BoneTransformTrack track;
+        for (int j = 0; j < channel->mNumPositionKeys; j++)
+        {
+            track.positionTimestamps.push_back(channel->mPositionKeys[j].mTime);
+            track.positions.push_back(assimpToGlmVec3(channel->mPositionKeys[j].mValue));
+        }
+        for (int j = 0; j < channel->mNumRotationKeys; j++)
+        {
+            track.rotationTimestamps.push_back(channel->mRotationKeys[j].mTime);
+            track.rotations.push_back(assimpToGlmQuat(channel->mRotationKeys[j].mValue));
+        }
+        for (int j = 0; j < channel->mNumScalingKeys; j++)
+        {
+            track.scaleTimestamps.push_back(channel->mScalingKeys[j].mTime);
+            track.scales.push_back(assimpToGlmVec3(channel->mScalingKeys[j].mValue));
+        }
+        animation.boneTransforms[channel->mNodeName.C_Str()] = track;
+    }
+}
+///////////////////////////////////////////////////////////
+/// \brief loadAnimation
+/// \param scene
+/// \param animation
+/// \param i
+///
+void loadAnimation(const aiScene *scene, Animation &animation,FrameName &frames, int i)
+{
+    // loading  first Animation
+    // std::cout << "scene->mNumAnimations " << scene->mNumAnimations << std::endl;
+    aiAnimation *anim = scene->mAnimations[i];
+    // std::cout << "Name " << scene->mAnimations[i]->mName.C_Str() << std::endl;
+    std::string_view temp=scene->mAnimations[i]->mName.C_Str();
+    size_t np=temp.find_last_of("|");
+    outputInfo("Name: ",temp.substr(np+1));
+    frames.frames.emplace(temp.substr(np+1),i);
     if (anim->mTicksPerSecond != 0.0f)
         animation.ticksPerSecond = anim->mTicksPerSecond;
     else
@@ -1375,6 +1442,7 @@ void loadModelB(Model *model, const std::string s, GLuint *modelLoc, GLuint *Bon
     std::unordered_map<std::string, std::pair<int, glm::mat4>> boneInfo;
     loadMeshBones(mesh, model->modelVI->vertices, model->modelVI->indices, boneInfo, nBoneCount);
     model->boneCount = nBoneCount;
+    FrameName frameName;
     for (int i = 0; i < scene->mNumAnimations; ++i)
     {
         // Загрузка скелета
@@ -1382,11 +1450,12 @@ void loadModelB(Model *model, const std::string s, GLuint *modelLoc, GLuint *Bon
         loadSkeleton(scene, skeleton, boneInfo);
         // Загрузка анимации
         Animation animation;
-        loadAnimation(scene, animation, i);
+        loadAnimation(scene, animation,frameName, i);
 
         model->skeletons->skeleton.push_back(skeleton);
         model->animations->animations.push_back(animation);
     }
+    model->frameName=frameName;
     // as the name suggests just inverse the global transform
     model->globalInverseTransform = assimpToGlmMatrix(scene->mRootNode->mTransformation);
     model->globalInverseTransform = glm::inverse(model->globalInverseTransform);
@@ -1546,7 +1615,8 @@ int main(int argc, char **argv)
 
     // modelsOnLevel.instances[0].pos = modelsOnLevel.instances[0].modelMatrix[3];
 
-    outputInfo("Hello World");
+    outputInfo(" Hello World"," Hello World");
+    // outputInfo("Hello World","j");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -1598,14 +1668,15 @@ int main(int argc, char **argv)
                     a.patrolBehavior->patrol = true;
                     float tr = GetRand(0,360);//anglereposition
                     // Logger::log(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
+                    //outputInfo(LogLevel::INFO,a.name+" Generate new Angle to "+std::to_string(tr));
 
                     setOrientToAngle(&a,tr);
-                    a.frame = 12;
+                    a.frame = a.model->frameName.frames["walking"];
                     a.speed = 10 + GetRand(1,5);
                 }
                 else if (a.pseudoTimer == 1000)
                 {
-                    a.frame = 10;
+                    a.frame = a.model->frameName.frames["run"];
                     a.patrolBehavior->agro = true;
                     a.patrolBehavior->patrol = false;
                     a.patrolBehavior->agrostart = true;
@@ -1671,33 +1742,33 @@ void processInput(GLFWwindow *window, Creature *model)
     {
         model->pos += cameraSpeed * cameraFront;
         cameraPos += cameraSpeed * cameraFront;
-        animation = 12;
+        animation = model->model->frameName.frames["walking"];
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
         model->pos -= cameraSpeed * cameraFront;
         cameraPos -= cameraSpeed * cameraFront;
-        animation = -12;
+        animation = -model->model->frameName.frames["walking"];
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
         model->pos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        animation = 4;
+        animation = model->model->frameName.frames["left_strafe"];
         idle = false;
     }
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         model->pos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        animation = 8;
+        animation = model->model->frameName.frames["right_strafe"];
         idle = false;
     }
     if (idle)
     {
-        animation = 0;
+        animation = model->model->frameName.frames["idle"];
     }
 }
 // glfw: whenever the mouse moves, this callback is called
