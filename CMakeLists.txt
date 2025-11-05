@@ -20,7 +20,7 @@ endif()
 
 # Проверка версии GLM
 find_package(glm REQUIRED)
-if("${glm_VERSION}" VERSION_LESS "1000008.0.2")
+if("${glm_VERSION}" VERSION_LESS "1.0.2")
   message(STATUS "GLM version: ${glm_VERSION}")
   add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 else()
@@ -32,7 +32,8 @@ find_package(Freetype REQUIRED)
 if("${FREETYPE_VERSION_STRING}" VERSION_LESS "1000008.0.2")
   message(STATUS "FREETYPE version: ${FREETYPE_VERSION_STRING}")
 else()
-  message(WARNING "FREETYPE version: ${FREETYPE_VERSION_STRING}")
+  #message(WARNING "FREETYPE version: ${FREETYPE_VERSION_STRING}")
+  message(FATAL_ERROR "FREETYPE not found!")
 endif()
 
 # Проверка версии glew
@@ -40,7 +41,8 @@ find_package(GLEW REQUIRED)
 if("${GLEW_VERSION}" VERSION_LESS "1000008.0.2")
   message(STATUS "GLEW version: ${GLEW_VERSION}")
 else()
-  message(WARNING "GLEW version: ${GLEW_VERSION}")
+  #message(WARNING "GLEW version: ${GLEW_VERSION}")
+  message(FATAL_ERROR "GLEW not found!")
 endif()
 
 # Проверка версии glfw3
@@ -48,7 +50,8 @@ find_package(glfw3 REQUIRED)
 if("${glfw3_VERSION}" VERSION_LESS "1000008.0.2")
   message(STATUS "GLFW3 version: ${glfw3_VERSION}")
 else()
-  message(WARNING "GLFW3 version: ${glfw3_VERSION}")
+  #message(WARNING "GLFW3 version: ${glfw3_VERSION}")
+  message(FATAL_ERROR "GLFW3 not found!")
 endif()
 
 #
