@@ -4,6 +4,8 @@ fix - orientation and set simple AI, but need fixes global orient, so yes in thi
 
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice 
 
+
+
 stress test 10000 :)
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
 
@@ -14,6 +16,11 @@ after [01]
 
 
 Progress
+
+Tracking Motion
+
+<img width="1913" height="996" alt="image" src="https://github.com/user-attachments/assets/ac772e9d-aa5c-466d-b3ab-d2ccf7b87ef9" />
+
 
 <img width="1853" height="1012" alt="image" src="https://github.com/user-attachments/assets/a912130e-dd2d-455f-820c-c0a2a3e2e4d7" />
 
