@@ -17,7 +17,7 @@ after [01]
 
 Progress
 
-Tracking Motion (From point A to point B on the Route) double light(main scene, main model) with shadows, with npc-orientation! its just work :)
+Tracking Motion (From point A to point B on the Route), double light(main scene, main model) with shadows, with npc-orientation! its just work :)
 notice on this chapter:
 ```
 from a to b Route(but route have points-steps local position from-to) need know orientation on local points
