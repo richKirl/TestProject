@@ -22,7 +22,7 @@ notice on this chapter:
 ```        
 glm::quat temp =  glm::quatLookAt(dirr, glm::vec3(0,1,0));
 obj.q = glm::slerp(obj.q,temp,0.1f);
-1 step of Route
+1 step of Route (subsystem of routing on the mesh - navigation system - A* or dejkstra )
 ```
 <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/75226699-4250-4eb1-9f54-27f322f83ac5" />
 
