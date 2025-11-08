@@ -17,7 +17,7 @@ after [01]
 
 Progress
 
-Tracking Motion (From point A to point B on the Route)
+Tracking Motion (From point A to point B on the Route) double light(main scene, main model) with shadows
 
 <img width="1913" height="996" alt="image" src="https://github.com/user-attachments/assets/ac772e9d-aa5c-466d-b3ab-d2ccf7b87ef9" />
 
