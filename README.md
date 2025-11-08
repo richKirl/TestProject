@@ -17,9 +17,10 @@ after [01]
 
 Progress
 
-Tracking Motion (From point A to point B on the Route) double light(main scene, main model) with shadows
+Tracking Motion (From point A to point B on the Route) double light(main scene, main model) with shadows, with npc-orientation!
 
-<img width="1913" height="996" alt="image" src="https://github.com/user-attachments/assets/ac772e9d-aa5c-466d-b3ab-d2ccf7b87ef9" />
+<img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/75226699-4250-4eb1-9f54-27f322f83ac5" />
+
 
 
 <img width="1853" height="1012" alt="image" src="https://github.com/user-attachments/assets/a912130e-dd2d-455f-820c-c0a2a3e2e4d7" />
