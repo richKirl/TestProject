@@ -434,6 +434,13 @@ struct ModelVB
 {
     GLuint vao, vbo, ebo;
     GLuint textureID;
+    ~ModelVB()
+    {
+        glDeleteBuffers(1, &vbo);
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &ebo);
+        glDeleteTextures(1,&textureID);
+    }
 };
 
 struct ModelVI
