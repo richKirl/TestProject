@@ -19,7 +19,8 @@ Progress
 
 Tracking Motion (From point A to point B on the Route) double light(main scene, main model) with shadows, with npc-orientation! its just work :)
 notice on this chapter:
-```        
+```
+from a to b Route(but route have points-steps local position from-to) need know orientation on local points
 glm::quat temp =  glm::quatLookAt(dirr, glm::vec3(0,1,0));
 obj.q = glm::slerp(obj.q,temp,0.1f);
 1 step of Route (subsystem of routing on the mesh - navigation system - A* or dejkstra )
