@@ -30,7 +30,7 @@ obj.q = glm::slerp(obj.q,temp,0.1f);
 Yellow backcolor for debug space npc(silhouette)
 <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/75226699-4250-4eb1-9f54-27f322f83ac5" />
 
-Ray-pickicng (ubuntu based test), slice-object container aabb<bvh>(for cube in this time sizex2) and pointer to model
+Ray-pickicng (ubuntu based test), slice-object aabb-metada for BVH-tree and pointer to model
 
 <img width="1854" height="1009" alt="image" src="https://github.com/user-attachments/assets/4896b1c7-6bef-4461-86c9-3c172694ecc6" />
 
