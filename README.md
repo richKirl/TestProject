@@ -134,6 +134,8 @@ void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
     renderTreePASS(root->right, shader,dt);
 }
 ```
+left object moved from route system from center map from high-to lowland, right object started from diagonal and moving on lowland map only
+
 <img width="1854" height="1009" alt="image" src="https://github.com/user-attachments/assets/4896b1c7-6bef-4461-86c9-3c172694ecc6" />
 
 
