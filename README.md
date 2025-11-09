@@ -108,7 +108,7 @@ void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
         glBindVertexArray(0);
     } else if (obj.type == OBJTYPES::DINAMIC && obj.ptr) {
         glm::mat4 translate = glm::translate(glm::mat4(1.f), obj.ptr->position);
-        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), obj.ptr->size);//тест размера бокса х2 для покрытия ray-picking
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), obj.ptr->size);//тест размера бокса х2y x1.5xz для покрытия ray-picking
         model = translate * scaleMatrix;
         shader->setInt("type", 0);
         shader->setMat4("model", model);
