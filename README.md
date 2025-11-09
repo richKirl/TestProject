@@ -121,7 +121,7 @@ void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
         glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), obj.ptr->creature.sc);
         model = translate * rotationMatrix * scaleMatrix;
         shader->setInt("type", 1);
-        if(obj.picker->selectedObject==obj.ptr){
+        if(obj.picker->selectedObject==obj.ptr){//можно и в выборе обработать просто перед выбором сбрасывать выбор/и в если промах сбрасывать выбор, ну у меня пока так
             shader->setVec3("objectColor", glm::vec3(0.8f, 0.4f, 0.4f));
         }
         else shader->setVec3("objectColor", glm::vec3(0.4f, 0.8f, 0.4f));
