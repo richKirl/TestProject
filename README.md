@@ -16,7 +16,9 @@ after [01]
 
 
 Progress
+
 gentoo based test
+
 Tracking Motion (From point A to point B on the Route), double light(main scene, main model) with shadows, with npc-orientation! its just work :)
 notice on this chapter:
 ```
