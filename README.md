@@ -53,7 +53,7 @@ struct RenderObject{
     OBJTYPES type;
     size_t size;
     GLuint *textureID;
-    Picker *picker;
+    Picker *picker;//пока так
 };
 template<typename T>
 struct SceneNode {
