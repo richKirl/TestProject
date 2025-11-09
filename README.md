@@ -28,6 +28,9 @@ obj.q = glm::slerp(obj.q,temp,0.1f);
 Yellow backcolor for debug space npc(silhouette)
 <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/75226699-4250-4eb1-9f54-27f322f83ac5" />
 
+Ray-pickicng 
+
+<img width="1854" height="1009" alt="image" src="https://github.com/user-attachments/assets/4896b1c7-6bef-4461-86c9-3c172694ecc6" />
 
 
 <img width="1853" height="1012" alt="image" src="https://github.com/user-attachments/assets/a912130e-dd2d-455f-820c-c0a2a3e2e4d7" />
