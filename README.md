@@ -31,7 +31,108 @@ Yellow backcolor for debug space npc(silhouette)
 <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/75226699-4250-4eb1-9f54-27f322f83ac5" />
 
 Ray-pickicng (ubuntu based test), slice-object aabb-metada for BVH-tree and pointer to model, scene also binary tree 
+```
+enum OBJTYPES
+{
+    STATIC,
+    DINAMIC,
+    TERRAIN,
+    SKELETALANIMATION,
+    LIGHT,
+};
 
+struct PASSES{
+    std::vector<Shader *> shader;
+};
+
+struct RenderObject{
+    Object3D *ptr;
+    glm::vec3 *pos;
+    GLuint *VAO;
+    OBJTYPES type;
+    size_t size;
+    GLuint *textureID;
+    Picker *picker;
+};
+template<typename T>
+struct SceneNode {
+    T object;
+    SceneNode* left;
+    SceneNode* right;
+
+    SceneNode(const T& obj) : object(obj), left(nullptr), right(nullptr) {}
+};
+template<typename T>
+SceneNode<T>* insertNode(SceneNode<T>* root, const T& obj)
+{
+    if (root == nullptr)
+        return new SceneNode<T>(obj);
+
+    // Вставляем по какому-то критерию, например, по size
+    if (obj.size < root->object.size)
+        root->left = insertNode(root->left, obj);
+    else
+        root->right = insertNode(root->right, obj);
+
+    return root;
+}
+template<typename T>
+void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
+{
+    if (root == nullptr)
+        return;
+
+    // Обработка левого поддерева
+    renderTreePASS(root->left, shader,dt);
+
+    // Рендер текущего объекта
+    const T& obj = root->object;
+
+    if (obj.VAO && *obj.VAO)
+        glBindVertexArray(*obj.VAO);
+    else
+        return; // или обработка ошибки
+
+    if (obj.textureID && *obj.textureID)
+        glBindTexture(GL_TEXTURE_2D, *obj.textureID);
+
+    glm::mat4 model = glm::mat4(1.f);
+    if (obj.type == OBJTYPES::TERRAIN && obj.pos) {
+        model = glm::translate(glm::mat4(1.f), *obj.pos);
+        shader->setInt("type", 0);
+        shader->setVec3("objectColor", glm::vec3(0.4f, 0.8f, 0.4f));
+        shader->setMat4("model", model);
+        // Предполагается, что шейдер уже активен
+        glDrawElements(GL_TRIANGLES, obj.size, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    } else if (obj.type == OBJTYPES::DINAMIC && obj.ptr) {
+        glm::mat4 translate = glm::translate(glm::mat4(1.f), obj.ptr->position);
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), obj.ptr->size);
+        model = translate * scaleMatrix;
+        shader->setInt("type", 0);
+        shader->setMat4("model", model);
+        // Предполагается, что шейдер уже активен
+        glDrawElements(GL_TRIANGLES, obj.size, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    } else if (obj.type == OBJTYPES::SKELETALANIMATION && obj.ptr){
+        updateModel(&obj.ptr->creature, dt, obj.ptr->creature.frame);
+        glm::mat4 rotationMatrix = glm::toMat4(obj.ptr->creature.orientation);
+        glm::mat4 translate = glm::translate(glm::mat4(1.f), obj.ptr->creature.pos);
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), obj.ptr->creature.sc);
+        model = translate * rotationMatrix * scaleMatrix;
+        shader->setInt("type", 1);
+        if(obj.picker->selectedObject==obj.ptr){
+            shader->setVec3("objectColor", glm::vec3(0.8f, 0.4f, 0.4f));
+        }
+        else shader->setVec3("objectColor", glm::vec3(0.4f, 0.8f, 0.4f));
+        shader->setMat4("model", model);
+        drawModel(&obj.ptr->creature);
+        glBindVertexArray(0);
+    }
+    // Обработка правого поддерева
+    renderTreePASS(root->right, shader,dt);
+}
+```
 <img width="1854" height="1009" alt="image" src="https://github.com/user-attachments/assets/4896b1c7-6bef-4461-86c9-3c172694ecc6" />
 
 
