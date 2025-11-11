@@ -38,7 +38,8 @@ mbsoftworks.sk/tutorials/opengl4/
 learnopengl.com
 
 </details>
--------------------------------------
+
+<br>
 
 fix - orientation and set simple AI, but need fixes global orient, so yes in this time it global bug [01]
 
