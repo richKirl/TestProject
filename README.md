@@ -2,6 +2,11 @@
 
 <img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/f7762ab9-8f8b-483b-b7af-d59e444a5c5b" />
 
+<details>
+  <summary>Links</summary>
+
+</details>
+
 fix - orientation and set simple AI, but need fixes global orient, so yes in this time it global bug [01]
 
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice 
