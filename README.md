@@ -208,6 +208,7 @@ void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
     renderTreePASS(root->right, shader,dt);
 }
 ```
+<br>
 </details>
 
 left object moved from route system from center map from high-to lowland, right object started from diagonal and moving on lowland map only, for this test trigger light have right object
