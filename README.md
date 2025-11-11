@@ -21,6 +21,7 @@ after [01]
 <details>
   <summary>Progress</summary>
 
+Detail current status
 
 <details>
   <summary>Gentoo based tests</summary>
