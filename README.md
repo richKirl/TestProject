@@ -63,7 +63,7 @@ after [01]
   <summary>Progress</summary>
 <br>
 Detail current status
-
+<br>
 <details>
   <summary>Gentoo based tests</summary>
 <br>
@@ -105,7 +105,8 @@ shadows calculate 2time in main shader and inDepth shader, shadows realize in th
 
 <details>
   <summary>Code</summary>
-
+<br>
+  
 ```
 enum OBJTYPES
 {
