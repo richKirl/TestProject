@@ -7,7 +7,7 @@ fix - orientation and set simple AI, but need fixes global orient, so yes in thi
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice 
 
 <details>
-  <summary>stress test 10000</summary>
+  <summary>Stress test 10000</summary>
 
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
 
@@ -17,10 +17,12 @@ after [01]
 
 </details>
 
+<details>
+  <summary>Progress</summary>
 
-Progress
+<details>
+  <summary>Gentoo based tests</summary>
 
-gentoo based test
 
 2000 000 particles (update base system with particle system)
 
@@ -41,6 +43,7 @@ obj.q = glm::slerp(obj.q,temp,0.1f);
 Yellow backcolor for debug space npc(silhouette)
 <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/75226699-4250-4eb1-9f54-27f322f83ac5" />
 
+</details>
 Ray-pickicng (ubuntu based test), slice-object aabb-metada for BVH-tree(or universal binary tree) and pointer to model, scene also binary tree 
 shadows calculate 2time in main shader and inDepth shader, shadows realize in this time from frustum and have pixelize effect 
 ```
@@ -146,7 +149,7 @@ void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
 }
 ```
 left object moved from route system from center map from high-to lowland, right object started from diagonal and moving on lowland map only, for this test trigger light have right object
-
+</details>
 
 
 1000 models
