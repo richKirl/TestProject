@@ -17,6 +17,10 @@ after [01]
 
 Progress
 
+2000 000 particles
+
+<img width="1917" height="1016" alt="image" src="https://github.com/user-attachments/assets/647b39e1-d19e-4b74-bbc7-3cdd508df2a4" />
+
 gentoo based test
 
 Tracking Motion (From point A to point B on the Route), double light(main scene, main model) with shadows, with npc-orientation! its just work :)
