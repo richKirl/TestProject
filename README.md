@@ -158,7 +158,3 @@ left object moved from route system from center map from high-to lowland, right 
 
 </details>
 
-
-1000 models
-
-<img width="796" height="634" alt="image" src="https://github.com/user-attachments/assets/fa5695e6-a25a-478c-8f78-45d6d32934d3" />
