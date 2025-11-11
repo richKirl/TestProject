@@ -17,7 +17,7 @@ after [01]
 
 Progress
 
-2000 000 particles
+2000 000 particles (update base system with particle system)
 
 <img width="1917" height="1016" alt="image" src="https://github.com/user-attachments/assets/647b39e1-d19e-4b74-bbc7-3cdd508df2a4" />
 
