@@ -4,7 +4,7 @@
 
 <details>
   <summary>Links</summary>
-
+<br>
 Resources:
 
 Animation:
@@ -47,7 +47,7 @@ now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on newor
 
 <details>
   <summary>Stress test 10000</summary>
-
+<br>
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
 
 after [01]
@@ -59,12 +59,12 @@ after [01]
 
 <details>
   <summary>Progress</summary>
-
+<br>
 Detail current status
 
 <details>
   <summary>Gentoo based tests</summary>
-
+<br>
 
 2000 000 particles (update base system with particle system)
 
@@ -79,7 +79,8 @@ notice on this chapter:
 
 <details>
   <summary>Code</summary>
-
+<br>
+  
 ```
 from a to b Route(but route have points-steps local position from-to) need know orientation on local points
 glm::quat temp =  glm::quatLookAt(dirr, glm::vec3(0,1,0));
@@ -96,7 +97,7 @@ Yellow backcolor for debug space npc(silhouette)
 
 <details>
   <summary>Ubuntu based test</summary>
-
+<br>
 Ray-pickicng (ubuntu based test), slice-object aabb-metada for BVH-tree(or universal binary tree) and pointer to model, scene also binary tree 
 shadows calculate 2time in main shader and inDepth shader, shadows realize in this time from frustum and have pixelize effect
 
