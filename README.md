@@ -9,7 +9,9 @@ Resources:
 
 Animation:
 
+animation based on this code github.com/hasinaxp/skeletal_animation-_assimp_opengl
 
+Some Concepts
 
 Noise Generation
 
