@@ -5,6 +5,38 @@
 <details>
   <summary>Links</summary>
 
+Resources:
+
+Animation:
+
+
+
+Noise Generation
+
+youtube.com/watch?v=qChQrNWU9Xw
+
+libnoise.sourceforge.net/noisegen/index.html
+
+stuffwithstuff.com/robot-frog/3d/hills/hill.html
+
+quatertnion
+
+wikipedia.org/wiki/Quaternion
+
+euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/transforms/index.html
+
+danceswithcode.net/engineeringnotes/quaternions/quaternions.html
+
+morphing in shader
+
+youtube.com/watch?v=KEMZR3unWTE
+
+base concepts
+
+mbsoftworks.sk/tutorials/opengl4/
+
+learnopengl.com
+
 </details>
 
 fix - orientation and set simple AI, but need fixes global orient, so yes in this time it global bug [01]
