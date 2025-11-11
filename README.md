@@ -45,6 +45,9 @@ Yellow backcolor for debug space npc(silhouette)
 
 </details>
 
+<details>
+  <summary>Ubuntu based test</summary>
+
 Ray-pickicng (ubuntu based test), slice-object aabb-metada for BVH-tree(or universal binary tree) and pointer to model, scene also binary tree 
 shadows calculate 2time in main shader and inDepth shader, shadows realize in this time from frustum and have pixelize effect 
 ```
@@ -150,6 +153,9 @@ void renderTreePASS(const SceneNode<T>* root, Shader *shader,float dt)
 }
 ```
 left object moved from route system from center map from high-to lowland, right object started from diagonal and moving on lowland map only, for this test trigger light have right object
+
+</details>
+
 </details>
 
 
