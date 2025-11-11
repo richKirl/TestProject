@@ -1,12 +1,13 @@
 # TestProject
 
+<img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/f7762ab9-8f8b-483b-b7af-d59e444a5c5b" />
+
 fix - orientation and set simple AI, but need fixes global orient, so yes in this time it global bug [01]
 
 now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on neworientations but nice 
 
-<img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/f7762ab9-8f8b-483b-b7af-d59e444a5c5b" />
-
-stress test 10000 :)
+<details>
+  <summary>stress test 10000</summary>
 
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
 
@@ -14,6 +15,7 @@ after [01]
 
 <img width="804" height="633" alt="testProgram1" src="https://github.com/user-attachments/assets/50f3da09-ff53-4ebd-bf0a-00f9d912fa62" />
 
+</details>
 
 
 Progress
