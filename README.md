@@ -6,8 +6,8 @@ now AnimationsRefactor - basic waveGenerator :) typicaly have some bugs on newor
 
 <img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/f7762ab9-8f8b-483b-b7af-d59e444a5c5b" />
 
-
 stress test 10000 :)
+
 <img width="793" height="621" alt="image" src="https://github.com/user-attachments/assets/0d1ec439-953e-4342-9372-ea0726a852af" />
 
 after [01]
@@ -18,13 +18,15 @@ after [01]
 
 Progress
 
+gentoo based test
+
 2000 000 particles (update base system with particle system)
 
 <img width="1917" height="1016" alt="image" src="https://github.com/user-attachments/assets/647b39e1-d19e-4b74-bbc7-3cdd508df2a4" />
 
 <img width="1920" height="1018" alt="image" src="https://github.com/user-attachments/assets/0a70d030-80a8-4c5c-beb9-65ad2c395aea" />
 
-gentoo based test
+
 
 Tracking Motion (From point A to point B on the Route), double light(main scene, main model) with shadows, with npc-orientation! its just work :)
 notice on this chapter:
