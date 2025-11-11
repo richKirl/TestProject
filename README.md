@@ -21,6 +21,8 @@ Progress
 
 <img width="1917" height="1016" alt="image" src="https://github.com/user-attachments/assets/647b39e1-d19e-4b74-bbc7-3cdd508df2a4" />
 
+<img width="1920" height="1018" alt="image" src="https://github.com/user-attachments/assets/0a70d030-80a8-4c5c-beb9-65ad2c395aea" />
+
 gentoo based test
 
 Tracking Motion (From point A to point B on the Route), double light(main scene, main model) with shadows, with npc-orientation! its just work :)
