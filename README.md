@@ -2,15 +2,8 @@
 
 ;)
 
-<img width="1920" height="1014" alt="image" src="https://github.com/user-attachments/assets/24c7624f-7ff2-4847-8124-552ecda859fa" />
+<img width="1920" height="1018" alt="image" src="https://github.com/user-attachments/assets/016fdf65-eee2-474e-880f-2e9373e5df9c" />
 
-<img width="1920" height="1016" alt="image" src="https://github.com/user-attachments/assets/44b031c8-2a79-4665-bbfa-23d91776b1ca" />
-
-
-
-
-
-<img width="1920" height="1019" alt="image" src="https://github.com/user-attachments/assets/f7762ab9-8f8b-483b-b7af-d59e444a5c5b" />
 
 <details>
   <summary>Links</summary>
