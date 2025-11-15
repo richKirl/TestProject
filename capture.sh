@@ -1,4 +1,5 @@
 ffmpeg -video_size 1700x900 -framerate 60 -f x11grab -i :0.0+154,148 output1.mp4;
+#........................................................^fix this for Display number
 ffmpeg -ss 00:00:16 -t 00:00:45 -i output1.mp4 -c copy output2.mp4;
 #from output0
 #ffmpeg -ss 00:00:00 -t 00:00:45 -i output1.mp4 -c copy output2.mp4#from output1
