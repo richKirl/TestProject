@@ -7,6 +7,10 @@ visual presentation core concept maybe like engine idk...
 https://github.com/user-attachments/assets/5287663e-255d-45e9-858b-78331faae6aa
 
 
+https://github.com/user-attachments/assets/8346d4c7-0747-45cf-b559-0f26619e585d
+
+
+
 
 <details>
   <summary>Links</summary>
