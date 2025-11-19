@@ -54,7 +54,8 @@ https://github.com/user-attachments/assets/31dccebf-bdf5-4cb0-8fd0-e84e7b2ad06a
 
 </details>
 
-current Project Pipeline we have terrain-navigation system, 2xTree - for render PASS(scene and sceneUI), 2xTree - bvh for collision object in world, and tree for collision 2D - ui, particle engine on G-shader via transform feedback
+current Project Pipeline:
+we have terrain-navigation system, 2xTree - for render PASS(scene and sceneUI), 2xTree - bvh for collision object in world, and tree for collision 2D - ui, particle engine on G-shader via transform feedback
 
 <img width="3294" height="576" alt="image" src="https://github.com/user-attachments/assets/21f1e8c0-f562-46ad-9f31-0f1c8d3c4162" />
 
