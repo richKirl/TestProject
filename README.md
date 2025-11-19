@@ -44,12 +44,15 @@ Lets Begin Immersive adventure
 
 visual presentation core concept maybe like engine idk...
 
+<details>
+  <summary>Video Progress</summary>
+
 https://github.com/user-attachments/assets/0ae2109e-2f45-4eb8-947e-d2abffee0b8f
 
 
 https://github.com/user-attachments/assets/31dccebf-bdf5-4cb0-8fd0-e84e7b2ad06a
 
-
+</details>
 
 current Project Pipeline we have terrain-navigation system, 2xTree - for render PASS(scene and sceneUI), 2xTree - bvh for collision object in world, and tree for collision 2D - ui, particle engine on G-shader via transform feedback
 
