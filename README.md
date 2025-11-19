@@ -1,27 +1,5 @@
 # TestProject
 
-Lets Begin Immersive adventure
-
-visual presentation core concept maybe like engine idk...
-
-https://github.com/user-attachments/assets/0ae2109e-2f45-4eb8-947e-d2abffee0b8f
-
-
-https://github.com/user-attachments/assets/31dccebf-bdf5-4cb0-8fd0-e84e7b2ad06a
-
-
-
-https://github.com/user-attachments/assets/5287663e-255d-45e9-858b-78331faae6aa
-
-
-https://github.com/user-attachments/assets/8346d4c7-0747-45cf-b559-0f26619e585d
-
-current Project Pipeline we have terrain-navigation system, 2xTree - for render PASS(scene and sceneUI), 2xTree - bvh for collision object in world, and tree for collision 2D - ui
-
-<img width="3294" height="576" alt="image" src="https://github.com/user-attachments/assets/21f1e8c0-f562-46ad-9f31-0f1c8d3c4162" />
-
-
-
 <details>
   <summary>Links</summary>
 <br>
@@ -60,6 +38,31 @@ mbsoftworks.sk/tutorials/opengl4/
 learnopengl.com
 
 </details>
+<br>
+
+Lets Begin Immersive adventure
+
+visual presentation core concept maybe like engine idk...
+
+https://github.com/user-attachments/assets/0ae2109e-2f45-4eb8-947e-d2abffee0b8f
+
+
+https://github.com/user-attachments/assets/31dccebf-bdf5-4cb0-8fd0-e84e7b2ad06a
+
+
+
+https://github.com/user-attachments/assets/5287663e-255d-45e9-858b-78331faae6aa
+
+
+https://github.com/user-attachments/assets/8346d4c7-0747-45cf-b559-0f26619e585d
+
+current Project Pipeline we have terrain-navigation system, 2xTree - for render PASS(scene and sceneUI), 2xTree - bvh for collision object in world, and tree for collision 2D - ui
+
+<img width="3294" height="576" alt="image" src="https://github.com/user-attachments/assets/21f1e8c0-f562-46ad-9f31-0f1c8d3c4162" />
+
+
+
+
 
 <br>
 
