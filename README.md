@@ -54,6 +54,11 @@ https://github.com/user-attachments/assets/31dccebf-bdf5-4cb0-8fd0-e84e7b2ad06a
 
 </details>
 
+Update
+
+<img width="790" height="615" alt="image" src="https://github.com/user-attachments/assets/54fb35c8-9a40-4a2b-9cb9-97a0984a6857" />
+
+
 current Project Pipeline:
 
 we have terrain-navigation system(dejkstra), 2xTree - for render PASS(scene and sceneUI), 2xTree - bvh for collision object in world, and tree for collision 2D - ui, particle engine on G-shader via transform feedback
