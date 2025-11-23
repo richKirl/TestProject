@@ -54,7 +54,7 @@ https://github.com/user-attachments/assets/31dccebf-bdf5-4cb0-8fd0-e84e7b2ad06a
 
 </details>
 
-Update - Text Unicode from ttf layers(but now it only debug need merge layers Languages maybe idk... ), Selector for picking
+Update - Text Unicode from ttf layers( text - work, emoji - work ), Selector for picking
 
 <img width="790" height="615" alt="image" src="https://github.com/user-attachments/assets/54fb35c8-9a40-4a2b-9cb9-97a0984a6857" />
 
